@@ -133,6 +133,13 @@ CLOUDFLARE_API_TOKEN=… CLOUDFLARE_ACCOUNT_ID=… npx wrangler pages deploy dis
 - Tiêu đề video YouTube ghi "135m²", sổ ghi 138 m² → trang giữ 138 m² theo sổ; nên sửa tiêu đề video cho khớp.
 
 ## 8. Việc còn chờ
-- Mã GTM (`tracking.gtmId`) + cấu hình thẻ Google Ads trong GTM (mục 3).
+- Mã GTM (`tracking.gtmId`) + cấu hình thẻ Google Ads trong GTM (mục 3). Tình trạng 21/11 (Google truonggiang2511a@gmail.com):
+  Google Ads đang dùng **124-440-6068 "Nhà Xinh Minh Thùy" còn kẹt ở "Tạo chiến dịch đầu tiên"** (vào trang Chuyển đổi bị đẩy về trình hướng dẫn) →
+  phải hoàn tất thiết lập (ngân sách + thanh toán — Giang tự làm) mới tạo được chuyển đổi. Các tài khoản khác đều đã huỷ/đóng (918-369-8280 là bản cũ).
+  GTM có sẵn: tài khoản "Nhà Xinh Minh Thuỳ" → container **GTM-NV7HRR4B** (bản Netlify cũ, chỉ có thẻ Google: AW-17767188385, chuyển đổi click_call /
+  click_zalo / form_submit_success, trình liên kết chuyển đổi — không có thẻ TikTok/Meta) — dùng lại được: đổi kích hoạt sang `lead_submit` /
+  `contact_click` (contact_kind) + Transaction ID `event_id`, thay mã AW + nhãn của tài khoản mới. Tài khoản "nhaxinhminhthuy" còn GTM-5FDCX8TX,
+  GTM-52TCQ75H, GTM-MTCT4JQW (web khác). Trình duyệt trong app hiện cảnh báo "Turn off ad blockers" ở Google Ads.
+- Tên miền: giỏ hàng Cloudflare đã có nhaxinhminhthuy.com (11,17 USD/năm), chờ thông tin chủ tên miền + thanh toán của Giang.
 - Dữ liệu CRM cũ trong dự án `giang-quant-dashboard` (đang dừng) — chép sang khi bật lại được.
 - Chuyển CRM ra dự án Supabase riêng khi nâng gói hoặc có tài khoản mới.
