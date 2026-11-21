@@ -156,8 +156,11 @@ CLOUDFLARE_API_TOKEN=… CLOUDFLARE_ACCOUNT_ID=… npx wrangler pages deploy dis
   → không phải che giấu (cloaking). Quảng cáo LTT còn "đang xem xét", chưa bị từ chối. Không loại trừ: phiên tự động hoá trình duyệt dồn dập trong Ads
   (nhiều thao tác liên tiếp, thử tải logo lỗi, Google bật "Xác nhận danh tính" giữa chừng) → sau này thao tác Google Ads để Giang tự bấm, Claude chỉ hướng dẫn/đọc số. Lúc đó Giang còn mở Ads ở Chrome riêng sửa CÙNG LÚC với trình duyệt
   trong app (2 phiên, 2 bộ cookie, cùng 1 bản nháp — có thể là lý do từ khoá/quảng cáo từng bị mất phải nhập lại) → mỗi lúc chỉ 1 người, 1 trình duyệt thao tác Ads.
-  Đơn kháng nghị (form "Account Suspension Appeal Form", 3 bước: Account details → Circumventing systems → Confirmation) 21/11 20:20 CHƯA gửi
-  (Ads → Chính sách → Account issues vẫn hiện "Start").
+  Đơn kháng nghị (form "Account Suspension Appeal Form", 3 bước: Account details → Circumventing systems → Confirmation) Giang ĐÃ GỬI 21/11 ~20:30,
+  21/11 20:47 Ads → Chính sách → Account issues: "In review". KHÔNG gửi đơn thứ 2 khi đang xét (Google: nhiều đơn trong 7 ngày → bị coi là vô căn cứ).
+  Lịch sử Giang kể 21/11: các tài khoản cũ bị ngưng vì không xác minh được nhà quảng cáo/doanh nghiệp (lúc đó chưa có giấy phép kinh doanh), 1 tài khoản bị
+  "Các hoạt động kinh doanh không được chấp nhận"; Giang huỷ tài khoản để Google hoàn tiền rồi tạo tài khoản mới. Gmail thứ 3 ngthmithuy225@gmail.com có
+  tài khoản Ads "Tạm dừng — hết thời hạn xác minh nhà quảng cáo". Nếu đơn bị bác: đơn 2 phải khai thật lịch sử này + đã có Hộ kinh doanh.
   Nghi nặng nhất = **nhiều tài khoản**: login truonggiang2511a có 861-159-6462 (đã đóng), 151-744-7772, 362-923-5047, 989-858-6625, 918-369-8280,
   159-692-9290 (đều đã huỷ), 124-440-6068 (đang thiết lập); login hungnguyen2511ab có 594-493-6894 (đã huỷ) + 225-186-9515 → ~9 tài khoản cùng 1 người/
   thương hiệu. Đơn kháng nghị phải khai thật lý do tạo/huỷ các tài khoản này. KHÔNG dùng 124-440-6068 để chạy thay.
