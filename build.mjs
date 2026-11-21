@@ -111,9 +111,10 @@ function heroHtml(h) {
     <p class="hero-trust">${ic('shield')}<span>${esc(h.trust)}</span></p>
   </div>`;
   if (h.video && h.video.youtube) {
-    // Ảnh bìa = ảnh mặt tiền của mình (nhẹ, hiện ngay) — bấm ▶ mới tải trình phát YouTube (app.js → playVid)
+    // Ảnh bìa = ảnh mặt tiền của mình (nhẹ, hiện ngay). Sau khi trang hiện xong app.js tự tải YouTube tắt tiếng phía dưới ảnh,
+    // video chạy thật mới che ảnh (không màn đen). Mạng yếu / bị chặn tự chạy → bấm ▶ như cũ (playVid).
     return `<section class="hero hero-v"><div class="hero-grid">
-  <div class="hero-video"><div class="vid" data-yt="${esc(h.video.youtube)}" role="button" tabindex="0" aria-label="Phát video: ${esc(h.video.title)}">
+  <div class="hero-video"><div class="vid" data-yt="${esc(h.video.youtube)}"${h.video.start ? ` data-start="${+h.video.start}"` : ''} role="button" tabindex="0" aria-label="Phát video: ${esc(h.video.title)}">
     ${img(h.slug, h.heroImage, { sizes: '(min-width: 960px) 700px, 100vw', alt: `${h.name} – video thực tế`, lazy: false, w: [800, 1600] })}
     <span class="vid-play">${ic('play')}</span>
     <span class="vid-cap"><span class="dot"></span>${esc(h.video.title)}${h.video.duration ? ` · ${esc(h.video.duration)}` : ''}</span>
@@ -144,7 +145,7 @@ function housePage(h) {
   const days = ''; // ngày xem do app.js tự dựng (7 ngày tới)
 
   return `${head({ title: h.title, description: h.description, url, image: `${BASE}/nha/${h.slug}/${h.heroImage}.webp`, rel: '../',
-    extra: `${preload}${hasVid ? '<link rel="preconnect" href="https://i.ytimg.com">\n' : ''}<script type="application/ld+json">${JSON.stringify(ld)}</script>\n<script>window.LP=${JSON.stringify(LP)}</script>\n` })}
+    extra: `${preload}${hasVid ? '<link rel="preconnect" href="https://www.youtube-nocookie.com">\n<link rel="preconnect" href="https://www.youtube.com">\n<link rel="dns-prefetch" href="https://i.ytimg.com">\n' : ''}<script type="application/ld+json">${JSON.stringify(ld)}</script>\n<script>window.LP=${JSON.stringify(LP)}</script>\n` })}
 <body>
 ${topBar()}
 <main id="top">

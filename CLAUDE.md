@@ -41,7 +41,13 @@ repo GitHub trống, code chỉ nằm trong 1 file zip ở Downloads rồi bị 
   `lead_submit` (event_id, lead_mode, user_data.sha256_phone_number → dùng cho Lượt chuyển đổi nâng cao), `contact_click` (contact_kind call|zalo), `video_play`.
 - Google Ads trong GTM: thẻ Chuyển đổi "Gửi form" kích hoạt bằng sự kiện tuỳ chỉnh `lead_submit`, Transaction ID = biến DL `event_id`;
   "Bấm Gọi/Zalo" bằng `contact_click`. Thẻ Google (AW-…) chạy trên All Pages.
-- Video YouTube đầu trang: chỉ ảnh bìa (ảnh mặt tiền của mình) + nút ▶; bấm mới tải `youtube-nocookie` (iframe). Không nhúng sẵn — nặng ~0,5–1 MB JS, chậm trang điện thoại.
+- Video YouTube đầu trang **tự chạy tắt tiếng** (Giang chọn 21/11 — trước đó bấm ▶ thì màn đen 2–3 s, khách dễ thoát). HTML vẫn chỉ có ảnh bìa (LCP, test kiểm);
+  `app.js` chèn iframe `youtube-nocookie` (`autoplay=1&mute=1&loop=1&enablejsapi=1`) SAU sự kiện `load`, nằm DƯỚI ảnh bìa; YouTube báo `playerState 1`
+  (postMessage `listening`) mới đặt `data-on="auto"` → ảnh mờ dần, hiện nút "🔊 Bật tiếng" (postMessage `unMute` + `setVolume 100`, đẩy `video_play`
+  `video_mode: unmute`). Lướt khỏi video khi còn tắt tiếng → `pauseVideo`. Mạng 2g / tiết kiệm dữ liệu / giảm chuyển động → không tự chạy (bấm ▶ như cũ).
+  12 s chưa chạy: trình phát sẵn sàng → hiện trình phát YouTube (chạm là chạy ngay); lỗi/chưa tải → gỡ, giữ ảnh + ▶. `video.start` (giây) = điểm bắt đầu.
+  Đánh đổi: tải thêm ~1 MB JS YouTube sau khi trang hiện (không ảnh hưởng LCP, tăng thời gian luồng chính). Máy làm việc (IP trung tâm dữ liệu) YouTube báo
+  "Video unavailable" → phải thử tự chạy bằng trình duyệt trong máy Giang (built-in browser, preset mobile).
 
 ## 4. CRM (schema `nx`, dự án giang-ai-marketing-os)
 - Bảng `nx.leads`, `nx.clicks`, `nx.notes`, `nx.config` — schema `nx` không mở qua Data API, anon/authenticated không có quyền bảng.

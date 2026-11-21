@@ -369,6 +369,77 @@
     });
   });
 
+  // ================= VIDEO YOUTUBE ĐẦU TRANG TỰ CHẠY (Giang chọn 21/11) =================
+  // Điện thoại chỉ cho tự chạy khi TẮT TIẾNG → có nút "Bật tiếng". Ảnh nhà (LCP) hiện ngay; trình phát YouTube (~1 MB) tải SAU khi trang hiện xong,
+  // nằm DƯỚI ảnh bìa và chỉ hiện lên khi YouTube báo đang phát → khách không thấy màn đen. Mạng yếu / tiết kiệm dữ liệu / giảm chuyển động → giữ nút ▶ như cũ.
+  // Lướt khỏi video mà video còn tắt tiếng → tạm dừng (đỡ tốn dữ liệu của khách), lướt lại → chạy tiếp.
+  var hv = $('.hero-v .vid');
+  if (hv && hv.getAttribute('data-yt')) {
+    var cn = navigator.connection || {};
+    var weak = cn.saveData || /(^|-)2g$/.test(cn.effectiveType || '') || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+    var ytWin = null, ytMuted = true, ytPlaying = false, ytReady = false, ytErr = false, inView = true, failT = 0, ytIfr = null;
+    var ytCmd = function (func, args) { if (ytWin) try { ytWin.postMessage(JSON.stringify({ event: 'command', func: func, args: args || [] }), '*'); } catch (e) { /* bỏ qua */ } };
+    var snd = document.createElement('button');
+    snd.type = 'button'; snd.className = 'vid-snd'; snd.hidden = true; snd.innerHTML = '🔊 Bật tiếng';
+    var onPlaying = function () {
+      if (ytPlaying) return; ytPlaying = true; clearTimeout(failT);
+      hv.setAttribute('data-on', 'auto'); // ẩn ảnh bìa, nhường chỗ cho video
+      if (ytMuted) snd.hidden = false;
+    };
+    addEventListener('message', function (e) {
+      if (!/^https:\/\/www\.youtube(-nocookie)?\.com$/.test(e.origin)) return;
+      var d; try { d = typeof e.data === 'string' ? JSON.parse(e.data) : e.data; } catch (er) { return; }
+      if (!d) return;
+      var info = d.info || {};
+      if (d.event === 'onReady') ytReady = true;
+      if (d.event === 'onError') { ytErr = true; dropYt(); }
+      if ((d.event === 'onStateChange' && d.info === 1) || info.playerState === 1) onPlaying();
+      if (typeof info.muted === 'boolean') { ytMuted = info.muted; if (!ytMuted) snd.hidden = true; }
+    });
+    var dropYt = function () { clearTimeout(failT); if (ytIfr && ytIfr.parentNode && !ytPlaying) { ytIfr.parentNode.removeChild(ytIfr); ytWin = null; ytIfr = null; } };
+    var autoStart = function () {
+      if (hv.getAttribute('data-on')) return; // khách đã tự bấm ▶
+      var yt = encodeURIComponent(hv.getAttribute('data-yt')), st = +hv.getAttribute('data-start') || 0;
+      var ifr = ytIfr = document.createElement('iframe');
+      ifr.className = 'yt-auto'; ifr.title = 'Video căn nhà';
+      ifr.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture; fullscreen'); ifr.setAttribute('allowfullscreen', '');
+      ifr.src = 'https://www.youtube-nocookie.com/embed/' + yt + '?autoplay=1&mute=1&playsinline=1&loop=1&playlist=' + yt + '&rel=0&modestbranding=1&enablejsapi=1'
+        + (st ? '&start=' + st : '') + '&origin=' + encodeURIComponent(location.origin);
+      ifr.addEventListener('load', function () {
+        ytWin = ifr.contentWindow;
+        try { ytWin.postMessage(JSON.stringify({ event: 'listening', id: 'hero', channel: 'widget' }), '*'); } catch (e) { /* bỏ qua */ }
+      });
+      hv.insertBefore(ifr, hv.firstChild);
+      hv.appendChild(snd);
+      // 12 giây chưa chạy: trình phát đã sẵn sàng (trình duyệt chặn tự chạy, vd. iPhone tiết kiệm pin) → cho hiện trình phát YouTube,
+      // khách chạm ▶ của YouTube là chạy ngay (đã tải xong, không chờ màn đen). Trình phát lỗi / chưa tải xong → gỡ, giữ ảnh + nút ▶ như cũ.
+      failT = setTimeout(function () {
+        if (ytPlaying || !ifr.parentNode) return;
+        if (ytReady && !ytErr) hv.setAttribute('data-on', 'auto'); else dropYt();
+      }, 12000);
+    };
+    snd.addEventListener('click', function (e) {
+      e.stopPropagation();
+      ytCmd('unMute'); ytCmd('setVolume', [100]); ytCmd('playVideo');
+      dl({ event: 'video_play', video_id: hv.getAttribute('data-yt'), video_mode: 'unmute' });
+      snd.innerHTML = 'Đang bật tiếng…';
+      setTimeout(function () { if (ytMuted && !snd.hidden) { snd.innerHTML = 'Chạm vào video, bấm biểu tượng 🔇 để bật tiếng'; setTimeout(function () { snd.hidden = true; }, 5000); } }, 1200);
+    });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) {
+        es.forEach(function (en) {
+          inView = en.isIntersecting;
+          if (!ytPlaying || !ytMuted) return; // khách đang nghe tiếng thì để chạy tiếp
+          ytCmd(inView ? 'playVideo' : 'pauseVideo');
+        });
+      }, { threshold: 0.25 }).observe(hv);
+    }
+    if (!weak) {
+      var go = function () { setTimeout(autoStart, 250); };
+      if (document.readyState === 'complete') go(); else addEventListener('load', go);
+    }
+  }
+
   // ================= CLIP NỀN HERO (tải sau khi trang hiện xong; điện thoại dùng clip dọc) =================
   var heroVid = $('.hero-vid');
   var calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
