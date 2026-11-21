@@ -69,10 +69,10 @@ ${noindex ? '<meta name="robots" content="noindex">\n' : ''}<link rel="icon" hre
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(description)}">
 ${image ? `<meta property="og:image" content="${image}">\n` : ''}<meta property="og:url" content="${url}">
-<link rel="preload" href="${rel}fonts/geist-vietnamese-700-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="${rel}fonts/geist-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="${rel}fonts/geist-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="${rel}fonts/geist-vietnamese-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <script>document.documentElement.classList.add('rv-on');setTimeout(function(){if(!window.__rv)document.documentElement.classList.remove('rv-on')},2500)</script>
-${extra}<link rel="stylesheet" href="${rel}styles.css?v=${V}">
+${extra}<style>${css.replaceAll('url(fonts/', `url(${rel}fonts/`)}</style>
 ${trackingHead()}</head>`;
 }
 
@@ -93,8 +93,8 @@ function heroHtml(h) {
     ${SITE.slogan ? `<p class="slogan">${esc(SITE.slogan)}</p>` : ''}
     <p class="hero-tag">${ic('pin')}<span>${esc(h.tag)}</span></p>
     <h1>${esc(h.name)}</h1>
-    <p class="hero-sub">${esc(h.sub)}</p>
     <div class="hero-price"><span class="price">${esc(h.priceText)}</span>${h.priceOld ? `<span class="price-old">${esc(h.priceOld)}</span>` : ''}<span class="price-note">${esc(h.priceNote)}</span></div>
+    <p class="hero-sub">${esc(h.sub)}</p>
     <ul class="chips">${h.chips.map((c, i) => `<li>${ic(h.chipIcons[i] || 'check')}<span>${esc(c)}</span></li>`).join('')}</ul>
     <div class="hero-cta" id="heroCta">
       <a class="btn btn-primary" href="#dat-lich" data-mode="xem">${ic('calendar')}Đặt lịch xem nhà</a>
@@ -111,6 +111,7 @@ function heroHtml(h) {
   <div class="hero-video"><div class="vid" data-yt="${esc(h.video.youtube)}" role="button" tabindex="0" aria-label="Phát video: ${esc(h.video.title)}">
     ${img(h.slug, h.heroImage, { sizes: '(min-width: 960px) 700px, 100vw', alt: `${h.name} – video thực tế`, lazy: false, w: [800, 1600] })}
     <span class="vid-play">${ic('play')}</span>
+    <span class="vid-price">${esc(h.priceText)}<small>${esc(h.chips[0] || '')}</small></span>
     <span class="vid-cap"><span class="dot"></span>${esc(h.video.title)}${h.video.duration ? ` · ${esc(h.video.duration)}` : ''}</span>
   </div></div>
   ${info}

@@ -76,6 +76,11 @@ CLOUDFLARE_API_TOKEN=… CLOUDFLARE_ACCOUNT_ID=… npx wrangler pages deploy dis
 - Khung gợi ý góc phải (`#nudge`): mỗi lượt vào trang (sessionStorage `lp_nudge_s`) hiện tối đa 1 lần khi khách đã xem kỹ; không hiện nếu đã bấm Gọi/Zalo (24h) hoặc đã gửi form (30 ngày). Giang chọn 21/11 (trước đây 3 ngày/lần). Không hiện ngay khi vào trang (khung che nội dung bị nền tảng đánh giá kém).
   Thẻ mở → thanh đáy `#bar` ẩn (thẻ có đủ Gọi / Zalo / Đặt lịch), đóng thẻ → thanh hiện lại — không để 2 bộ nút trùng nhau (Giang báo 21/11).
   Thanh đáy luôn có dòng mời "Anh/chị muốn xem nhà thực tế? Dẫn xem tận nơi, miễn phí" (`.bar-t`, cao thêm ~22px → `--bar:88px`).
+- 21/11 tối ưu điện thoại (Lighthouse mobile 82→91, Accessibility 97→100, FCP 2,3→1,5 s, LCP 3,0→2,4 s trên máy chủ thử không nén):
+  CSS nhúng thẳng vào trang (bỏ 1 lượt tải chặn hiển thị; CRM vẫn dùng `/styles.css`), font Geist bản variable 3 file thay 12 file,
+  màu nút gọi `--call:#15803D` (đủ tương phản dưới nắng), màn đầu 360×640 (trình duyệt trong TikTok/Facebook) phải thấy GIÁ:
+  thẻ giá trên ảnh bìa video + giá đặt ngay dưới tiêu đề. Pixel TikTok/Meta vẫn tải sau `load` (chặn ~0,5 s luồng chính) —
+  KHÔNG dời tới lúc khách chạm vì sẽ mất PageView/ViewContent của khách thoát nhanh (nền tảng tối ưu kém hơn).
 - Tiêu đề video YouTube ghi "135m²", sổ ghi 138 m² → trang giữ 138 m² theo sổ; nên sửa tiêu đề video cho khớp.
 
 ## 8. Việc còn chờ
