@@ -247,7 +247,7 @@ ${heroHtml(h)}
   <p class="bar-t"><b>Anh/chị muốn xem nhà thực tế?</b> <span>Dẫn xem tận nơi, miễn phí</span></p>
   <a class="bar-call" href="${telHref}">${ic('phone')}<span>Gọi ngay</span></a>
   <a class="bar-zalo" href="${SITE.zalo}" target="_blank" rel="noopener">${ic('zalo')}<span>Zalo</span></a>
-  <a class="bar-main" href="#dat-lich" data-mode="xem">${ic('calendar')}<span>Đặt lịch xem</span></a>
+  <a class="bar-main" href="#dat-lich" data-mode="xem">${ic('calendar')}<span>Đặt lịch<span class="nw"> xem</span></span></a>
 </nav>
 <aside class="nudge" id="nudge" hidden aria-label="Gợi ý liên hệ">
   <button type="button" class="nudge-x" aria-label="Đóng gợi ý">${ic('x')}</button>

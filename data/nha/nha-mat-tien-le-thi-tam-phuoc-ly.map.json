@@ -12,10 +12,10 @@
     ],
     "cardSide": "l",
     "photoPos_v": [
-      0.2,
-      0.64
+      0.21,
+      0.5
     ],
-    "cardSide_v": "r"
+    "cardSide_v": "b"
   },
   "frontRoad": {
     "way": 610072826,
@@ -58,12 +58,12 @@
       0.84
     ],
     "outPos_v": [
-      0.24,
-      0.565
+      0.25,
+      0.8
     ],
     "inPos_v": [
-      0.55,
-      0.4
+      0.7,
+      0.43
     ]
   },
   "highlightRoads": [
@@ -189,5 +189,7 @@
       "side": "l",
       "side_v": "l"
     }
-  ]
+  ],
+  "minimal_v": true,
+  "fsBoost_v": 1.6
 }

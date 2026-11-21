@@ -118,7 +118,10 @@ def render_html(W, Hh, vertical):
     B = CFG['boundary']
     # khung nhìn: phủ bbox, chừa chỗ cho thẻ tiêu đề (trên) và ô phóng to
     (sx0, sy1), (sx1, sy0) = wpx(BB['s'], BB['w'], Z), wpx(BB['n'], BB['e'], Z)
-    padt, padb, padl, padr = (0.17, 0.05, 0.03, 0.03) if not vertical else (0.16, 0.24, 0.03, 0.03)
+    # Bản dọc hiện ~350px trên điện thoại → chữ phóng to (fsBoost_v) và bớt nhãn (minimal_v): bỏ thẻ tiêu đề, nhãn đường, điểm xa;
+    # tiện ích chỉ còn số tròn (khớp bảng khoảng cách ngay dưới bản đồ).
+    MIN = vertical and CFG.get('minimal_v', False)
+    padt, padb, padl, padr = (0.17, 0.05, 0.03, 0.03) if not vertical else ((0.05 if MIN else 0.16), 0.24, 0.03, 0.03)
     bw, bh = sx1 - sx0, sy1 - sy0
     sc = min(W * (1 - padl - padr) / bw, Hh * (1 - padt - padb) / bh)
     cx = (sx0 + sx1) / 2 + (padr - padl) * W / sc / 2; cy = (sy0 + sy1) / 2 - (padt - padb) * Hh / sc / 2
@@ -134,12 +137,12 @@ def render_html(W, Hh, vertical):
     parts = list(split(big, LineString(sp)).geoms)
     hcm = [g for g in parts if not g.contains(Point(hx, hy))]
     poly = lambda g: ' '.join(f'{x:.1f},{y:.1f}' for x, y in g.exterior.coords)
-    fs = W / 800
+    fs = W / 800 * (CFG.get('fsBoost_v', 1) if vertical else 1)
     V = '_v' if vertical else ''
     P = lambda obj, key, ll: ((obj[key + V][0] * W, obj[key + V][1] * Hh) if key + V in obj else S(*ll))
     inx, iny = P(B, 'inPos', B['inAt']); outx, outy = P(B, 'outPos', B['outAt'])
     # ô phóng to quanh nhà (z18 → 1 px thế giới = 1 px CSS)
-    IR = 88 if not vertical else 96
+    IR = 88 if not vertical else round(96 * (1.3 if MIN else 1))
     icx, icy = (W - IR - 22, Hh - IR - 34) if not vertical else (W - IR - 24, Hh - IR - 34)
     ihx, ihy = wpx(H['lat'], H['lng'], ZI); isc = 1.0
     ibx, iby = (wpx(*near_ll, ZI)[0] - ihx) * isc, (wpx(*near_ll, ZI)[1] - ihy) * isc
@@ -155,7 +158,7 @@ def render_html(W, Hh, vertical):
             elif v < 0: ts.append(lo_ / v)
         t = min(ts); return hx + dx * t, hy + dy * t, math.degrees(math.atan2(dy, dx))
     far_html = ''
-    for f in CFG.get('far', []):
+    for f in ([] if MIN else CFG.get('far', [])):
         ex, ey, ang = edge(f['lat'], f['lng'])
         if 'pos' + V in f:
             ex, ey = f['pos' + V][0] * W, f['pos' + V][1] * Hh
@@ -166,7 +169,8 @@ def render_html(W, Hh, vertical):
     for p in CFG['pois']:
         px_, py_ = S(p['lat'], p['lng'])
         side = p.get('side_v' if vertical else 'side', 'r')
-        poi_html += f'<div class="poi poi-{side}" style="left:{px_:.0f}px;top:{py_:.0f}px"><i>{p["n"]}</i><span>{p.get("short", p["name"])}</span></div>'
+        lbl = '' if MIN else f'<span>{p.get("short", p["name"])}</span>'
+        poi_html += f'<div class="poi poi-{side}" style="left:{px_:.0f}px;top:{py_:.0f}px"><i>{p["n"]}</i>{lbl}</div>'
     road_svg = ''.join(f'<polyline points="{pts(c)}" class="{"minor" if hr.get("style") == "minor" else "xway"}"/>' for hr, cs in hl_roads for c in cs)
     zone_svg = ''.join(f'<polyline points="{pts(rt)}" class="zroute"/>' for rt in zone_routes)
     zone_html = ''
@@ -174,16 +178,18 @@ def render_html(W, Hh, vertical):
         zx, zy = S(zn['lat'], zn['lng']); cxp, cyp = P(zn, 'pos', (zn['lat'], zn['lng']))
         zside = zn.get('side' + V, 'c')
         zone_svg += f'<line x1="{zx:.1f}" y1="{zy:.1f}" x2="{cxp:.1f}" y2="{cyp:.1f}" stroke="#FDE68A" stroke-width="{2*fs:.1f}"/>'
-        zone_html += f'<div class="zmark" style="left:{zx:.0f}px;top:{zy:.0f}px">🎓</div><div class="zcard zc-{zside}" style="left:{cxp:.0f}px;top:{cyp:.0f}px"><b>{zn["name"]}</b><span>{zn["sub"]}</span><small>{zn["note"]}</small></div>'
+        zsub = '' if MIN else f'<span>{zn["sub"]}</span>'
+        zone_html += f'<div class="zmark" style="left:{zx:.0f}px;top:{zy:.0f}px">🎓</div><div class="zcard zc-{zside}" style="left:{cxp:.0f}px;top:{cyp:.0f}px"><b>{zn["name"]}</b>{zsub}<small>{zn["note"]}</small></div>'
     road_lbl = ''
     for hr, cs in hl_roads:
-        if cs and ('at' in hr or 'pos' + V in hr):
+        if cs and not MIN and ('at' in hr or 'pos' + V in hr):
             ax_, ay_ = P(hr, 'pos', hr.get('at')); road_lbl += f'<div class="rlbl xl" style="left:{ax_:.0f}px;top:{ay_:.0f}px">{hr["label"]}</div>'
     fx, fy = P(CFG['frontRoad'], 'pos', CFG['frontRoad']['at'])
     mpp = 156543.03 * math.cos(math.radians(H['lat'])) / 2 ** Z / sc
     sbar = 500 / mpp
     bx_, by_ = P(H, 'photoPos', (H['lat'], H['lng']))
     card_side = H.get('cardSide' + V, 'l')
+    HEAD = f'<div class="head"><p class="ey">Vị trí căn nhà</p><h1>Sát ranh TP.HCM · Mặt tiền Lê Thị Tám</h1><p class="sl">Qua ranh sang xã Hưng Long (Bình Chánh cũ) chỉ ~{round(dist_m)} m</p></div>'
     if os.environ.get('MAPDEBUG'):
         print(('DOC' if vertical else 'NGANG'), 'nhà', round(hx*2), round(hy*2), 'zones', [tuple(round(v*2) for v in S(z['lat'], z['lng'])) for z in CFG.get('zones', [])], 'pois', [tuple(round(v*2) for v in S(p['lat'], p['lng'])) for p in CFG['pois']], 'near', tuple(round(v*2) for v in S(*near_ll)))
     return f"""<!doctype html><html><head><meta charset="utf-8"><style>
@@ -201,7 +207,7 @@ svg.ov{{position:absolute;inset:0;width:{W}px;height:{Hh}px}}
 .minor{{fill:none;stroke:#FDE68A;stroke-width:{2.6*fs:.1f};stroke-linecap:round;opacity:.75}}
 .zroute{{fill:none;stroke:#FDE68A;stroke-width:{3*fs:.1f};stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:{2*fs:.0f} {6*fs:.0f};opacity:.95}}
 .zmark{{position:absolute;transform:translate(-50%,-50%);width:{40*fs:.0f}px;height:{40*fs:.0f}px;border-radius:50%;background:#FBBF24;border:3px solid #fff;display:grid;place-items:center;font-size:{20*fs:.0f}px;box-shadow:0 0 0 {10*fs:.0f}px rgba(251,191,36,.25),0 0 0 {22*fs:.0f}px rgba(251,191,36,.12),0 8px 20px rgba(0,0,0,.45)}}
-.zcard{{position:absolute;transform:translate(-50%,-50%);background:linear-gradient(135deg,#FEF3C7,#FDE68A);color:#451A03;border-radius:{12*fs:.0f}px;padding:{8*fs:.0f}px {12*fs:.0f}px;box-shadow:0 10px 26px rgba(0,0,0,.45);width:{205*fs:.0f}px;border:2px solid #fff}}
+.zcard{{position:absolute;transform:translate(-50%,-50%);background:linear-gradient(135deg,#FEF3C7,#FDE68A);color:#451A03;border-radius:{12*fs:.0f}px;padding:{8*fs:.0f}px {12*fs:.0f}px;box-shadow:0 10px 26px rgba(0,0,0,.45);{'white-space:nowrap' if MIN else 'width:'+str(round(205*fs))+'px'};border:2px solid #fff}}
 .zc-l{{transform:translate(-100%,-50%)}} .zc-r{{transform:translate(0,-50%)}}
 .zcard b{{display:block;font-size:{14*fs:.0f}px;text-transform:uppercase;letter-spacing:.04em}} .zcard span{{display:block;font-size:{11*fs:.0f}px;font-weight:600;margin-top:2px;line-height:1.3}} .zcard small{{display:block;font-size:{10.5*fs:.0f}px;font-weight:800;color:#92400E;margin-top:3px}}
 .route{{fill:none;stroke:#BBF7D0;stroke-width:{3*fs:.1f};stroke-linecap:round;stroke-linejoin:round;opacity:.85}}
@@ -214,7 +220,7 @@ svg.ov{{position:absolute;inset:0;width:{W}px;height:{Hh}px}}
 .pin::after{{display:none}}
 .pulse{{position:absolute;left:{hx:.1f}px;top:{hy:.1f}px;width:{30*fs:.0f}px;height:{30*fs:.0f}px;border-radius:50%;transform:translate(-50%,-50%);background:rgba(255,255,255,.35);box-shadow:0 0 0 {10*fs:.0f}px rgba(255,255,255,.18),0 0 0 {22*fs:.0f}px rgba(255,255,255,.08)}}
 .dot{{position:absolute;left:{hx:.1f}px;top:{hy:.1f}px;width:{13*fs:.0f}px;height:{13*fs:.0f}px;border-radius:50%;background:#14532D;border:3px solid #fff;transform:translate(-50%,-50%)}}
-.hcard{{position:absolute;left:{bx_ + (-44 if card_side == 'l' else 44)*fs:.1f}px;top:{by_:.1f}px;transform:translate({'-100%' if card_side == 'l' else '0'},-50%);background:#fff;border-radius:{12*fs:.0f}px;padding:{8*fs:.0f}px {12*fs:.0f}px;box-shadow:0 10px 26px rgba(0,0,0,.4);white-space:nowrap;border-left:{5*fs:.0f}px solid #14532D}}
+.hcard{{position:absolute;left:{bx_ + {'l': -44, 'r': 44, 'b': 0}[card_side]*fs:.1f}px;top:{by_ + (40*fs if card_side == 'b' else 0):.1f}px;transform:translate({ {'l': '-100%', 'r': '0', 'b': '-50%'}[card_side] },{'0' if card_side == 'b' else '-50%'});text-align:{'center' if card_side == 'b' else 'left'};background:#fff;border-radius:{12*fs:.0f}px;padding:{8*fs:.0f}px {12*fs:.0f}px;box-shadow:0 10px 26px rgba(0,0,0,.4);white-space:nowrap;border-left:{5*fs:.0f}px solid #14532D}}
 .hcard b{{display:block;font-size:{14.5*fs:.0f}px;color:#0B3B22}} .hcard span{{display:block;font-size:{12*fs:.0f}px;color:#C2410C;font-weight:800;margin-top:1px}}
 .poi{{position:absolute;display:flex;align-items:center;gap:{5*fs:.0f}px;transform:translate(-{12*fs:.0f}px,-50%)}}
 .poi-l{{flex-direction:row-reverse;transform:translate(calc(-100% + {12*fs:.0f}px),-50%)}}
@@ -252,7 +258,7 @@ svg.ov{{position:absolute;inset:0;width:{W}px;height:{Hh}px}}
 <div class="zone in" style="left:{inx:.0f}px;top:{iny:.0f}px">{B['inLabel']}<small>{B['inSub']}</small></div>
 <div class="zone out" style="left:{outx:.0f}px;top:{outy:.0f}px">{B['outLabel']}<small>{B['outSub']}</small></div>
 {road_lbl}
-<div class="rlbl fr" style="left:{fx:.0f}px;top:{fy:.0f}px">{CFG['frontRoad']['label']}</div>
+{'' if MIN else f'<div class="rlbl fr" style="left:{fx:.0f}px;top:{fy:.0f}px">{CFG["frontRoad"]["label"]}</div>'}
 {poi_html}
 {zone_html}
 <div class="pulse"></div><div class="dot"></div>
@@ -265,9 +271,9 @@ svg.ov{{position:absolute;inset:0;width:{W}px;height:{Hh}px}}
   <polyline points="{iline}" fill="none" stroke="#fff" stroke-width="8"/><polyline points="{iline}" fill="none" stroke="#F97316" stroke-width="4.5" stroke-dasharray="9 5"/>
   <line x1="0" y1="0" x2="{ibx:.1f}" y2="{iby:.1f}" stroke="#fff" stroke-width="3"/>
   <circle cx="0" cy="0" r="10" fill="#14532D" stroke="#fff" stroke-width="3"/>
-  <text x="{ibx/2 + 9:.1f}" y="{iby/2 + 5:.1f}" font-family="G" font-weight="800" font-size="15" fill="#fff" stroke="#0B3B22" stroke-width="4" paint-order="stroke">~{round(dist_m)} m</text>
+  <text x="{ibx/2 + 9:.1f}" y="{iby/2 + 5:.1f}" font-family="G" font-weight="800" font-size="{15*max(1, fs*800/W*(0.85 if vertical else 1)):.0f}" fill="#fff" stroke="#0B3B22" stroke-width="4" paint-order="stroke">~{round(dist_m)} m</text>
 </svg></div>
-<div class="head"><p class="ey">Vị trí căn nhà</p><h1>Sát ranh TP.HCM · Mặt tiền Lê Thị Tám</h1><p class="sl">Qua ranh sang xã Hưng Long (Bình Chánh cũ) chỉ ~{round(dist_m)} m</p></div>
+{'' if MIN else HEAD}
 <div class="foot"><div><div class="sbar"></div>500 m</div><span>Ảnh vệ tinh © Esri · Ranh, đường © OpenStreetMap · Đường đi đo bằng OSRM</span></div>
 </body></html>"""
 

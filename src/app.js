@@ -399,9 +399,31 @@
       es.forEach(function (e) { if (e.target === heroCta) vis.hero = e.isIntersecting; else vis.form = e.isIntersecting; });
       upd();
     }, { threshold: 0.15 }).observe(heroCta);
-    var io2 = new IntersectionObserver(function (es) { es.forEach(function (e) { vis.form = e.isIntersecting; }); upd(); }, { threshold: 0.2 });
+    var io2 = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { vis.form = e.isIntersecting; });
+      // Khách đã tới form → thẻ nhắc xong việc, tự đóng để không che ô nhập
+      if (vis.form && nudge && !nudge.hidden) nudge.hidden = true;
+      upd();
+    }, { threshold: 0.2 });
     io2.observe(formSec);
     upd();
+  }
+
+  // ================= THANH ĐẦU TRANG (điện thoại) =================
+  // Lướt xuống → ẩn (thanh đáy đã có Gọi/Zalo/Đặt lịch), lướt lên → hiện lại. Màn 360×640 trong TikTok/Facebook lấy lại ~56px đọc nội dung.
+  var top = $('.top');
+  if (top && window.matchMedia && matchMedia('(max-width: 899px)').matches) {
+    var lastY = scrollY, ticking = false;
+    addEventListener('scroll', function () {
+      if (ticking) return; ticking = true;
+      requestAnimationFrame(function () {
+        var y = scrollY, dy = y - lastY;
+        if (y < 120 || dy < -6) top.classList.remove('top-up');
+        else if (dy > 6) top.classList.add('top-up');
+        if (Math.abs(dy) > 6) lastY = y;
+        ticking = false;
+      });
+    }, { passive: true });
   }
 
   // ================= THẺ NHẮC (thay popup) =================
@@ -427,6 +449,7 @@
     addEventListener('scroll', check, { passive: true });
     setInterval(check, 3000);
     $('.nudge-x', nudge).addEventListener('click', hideNudge);
+    document.addEventListener('focusin', function (e) { if (!nudge.hidden && /INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) hideNudge(); });
     $$('a', nudge).forEach(function (a) { a.addEventListener('click', function () { nudge.hidden = true; upd(); }); });
     var ty = null;
     nudge.addEventListener('touchstart', function (e) { ty = e.touches[0].clientY; }, { passive: true });

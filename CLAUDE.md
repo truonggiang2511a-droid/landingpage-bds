@@ -92,6 +92,11 @@ CLOUDFLARE_API_TOKEN=… CLOUDFLARE_ACCOUNT_ID=… npx wrangler pages deploy dis
   KHÔNG có ranh công khai (chưa có polygon OSM/GIS; đồ án KĐT Hưng Long ~1.512,7 ha mới lấy ý kiến 28/7–18/8/2026, Vingroup được giao phối hợp lập quy hoạch;
   khu đại học phía Bắc ~293,3 ha, phía Nam ~60,3 ha) → chỉ ghim **vị trí tham khảo**, không tự vẽ ranh. Phía Nam KĐT giáp Đ. Đoàn Nguyễn Tuấn (tô mờ `style: minor`).
   Ảnh bìa nhà tách khỏi điểm ghim (`house.photoPos[_v]`, `cardSide[_v]`) để không che đường; `MAPDEBUG=1` in toạ độ màn hình các điểm để chỉnh nhãn.
+- 21/11 rà UI/UX điện thoại (Playwright 360×640, 390×844): (1) thẻ nhắc đang mở mà khách lướt tới form → che ô nhập ⇒ tự đóng khi `#dat-lich` hiện
+  hoặc khách bấm vào ô nhập; (2) thanh đầu `.top` lướt xuống ẩn / lướt lên hiện (chỉ <900px, lấy lại 56px trên màn nhỏ); (3) nút Zalo trên thanh đáy
+  to ngang 2 nút kia (lưới 1.25/1/1.25), ≤380px chữ "Đặt lịch xem" rút còn "Đặt lịch" để không xuống 2 dòng; (4) bản đồ dọc chữ quá nhỏ
+  (hiện ~350px) ⇒ `minimal_v` + `fsBoost_v: 1.6` trong `.map.json`: bỏ thẻ tiêu đề/nhãn đường/điểm xa, tiện ích chỉ còn số (khớp bảng dưới),
+  thẻ nhà nằm dưới ảnh (`cardSide_v: "b"`).
 - Tiêu đề video YouTube ghi "135m²", sổ ghi 138 m² → trang giữ 138 m² theo sổ; nên sửa tiêu đề video cho khớp.
 
 ## 8. Việc còn chờ
