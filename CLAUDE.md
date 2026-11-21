@@ -37,6 +37,7 @@ repo GitHub trống, code chỉ nằm trong 1 file zip ở Downloads rồi bị 
 | `functions/_middleware.js` | 301 pages.dev → tên miền (bật bằng `CANONICAL_REDIRECT=on`) |
 | `tools/ban-do.py` + `data/nha/<slug>.map.json` | Vẽ bản đồ vị trí (ngang 1600 + dọc 1170, kèm bản 800): nền vệ tinh Esri, ranh = relation OSM, đường đi OSRM, ô phóng to điểm ranh. Vị trí nhãn chỉnh trong `.map.json` (`pos`, `pos_v` = tỉ lệ khung) |
 | `tools/xem-thu.py` | Bản xem thử gửi Giang (artifact claude.ai): lấy `dist/<slug>` → `xem-thu/` (bỏ pixel, form demo, dải báo). Đăng lại bằng publish_files, artifact `0286d960-a184-40fd-86d4-eb5b6564c7a2` |
+| `tools/anh-quang-cao.py` | Ảnh quảng cáo từ ảnh thật của căn (ảnh tràn + 1 dòng chính + 1 dòng phụ + thương hiệu, không SĐT/gạch giá) → `quang-cao/<short>/zalo/<mẫu>-1200x628|1080x1080.jpg`. Sửa mẫu trong `MAU` |
 | `supabase/migrations/` | Schema `nx` + các hàm `public.nx_*` |
 | `test/` | `functions.mjs` (16 ca, fetch giả), `page.mjs` (kiểm trang dựng), `source.mjs` (phân loại nguồn CRM) — `npm test` |
 
@@ -152,6 +153,8 @@ CLOUDFLARE_API_TOKEN=… CLOUDFLARE_ACCOUNT_ID=… npx wrangler pages deploy dis
 - 21/11 Lighthouse mobile trên web thật SAU khi bật video tự chạy: Performance 91 → **70** (FCP 1,5 s, LCP 2,2 s vẫn tốt; TBT 1,8 s do YouTube ~1,5 MB +
   pixel Facebook/TikTok), Accessibility 100, SEO 100, Best Practices 79 (cookie bên thứ ba của YouTube/Facebook). Ảnh/font của mình đã cache 1 năm;
   các mục "cache ngắn" còn lại đều là của Facebook/YouTube. Nếu khách máy yếu thoát nhiều → cân nhắc chỉ tự chạy khi khách lướt/chạm.
+- 21/11 ảnh quảng cáo Zalo: font Geist phải khai báo KÈM `unicode-range` như `src/styles.css` (3 file vi/latin/latin-ext). Khai báo 3 file không có
+  unicode-range thì file latin đè file tiếng Việt → mất dấu ("Sổ hồng" thành "Sô hông"). Script lấy nguyên @font-face từ styles.css. Tránh ảnh có TV/người lạ.
 - Tiêu đề video YouTube ghi "135m²", sổ ghi 138 m² → trang giữ 138 m² theo sổ; nên sửa tiêu đề video cho khớp.
 
 ## 8. Việc còn chờ
