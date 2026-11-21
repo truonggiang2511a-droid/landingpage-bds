@@ -12,10 +12,13 @@ repo GitHub trống, code chỉ nằm trong 1 file zip ở Downloads rồi bị 
 ## 1. Tổng quan
 - Web tĩnh + Cloudflare Pages Functions. **1 file `data/nha/<slug>.json` = 1 trang `/<slug>/`**. `node build.mjs` → `dist/`.
 - Cloudflare Pages dự án `nhaxinhminhthuy-bds` (tài khoản Cloudflare Hungnguyen2511ab@gmail.com, account ID `335d210ae0fbc3ac05c5d7b9f45d0a60`,
-  đăng nhập bằng Google). Tên miền `nhaxinhminhthuy.com`: **21/11 chưa có trong tài khoản** (chưa mua xong ở Cloudflare Registrar) → web đang chạy ở
-  `nhaxinhminhthuy-bds.pages.dev` và **`data/site.json → baseUrl` tạm để pages.dev** (canonical, og:url, og:image, sitemap trỏ về đây — trước đó trỏ tên miền
-  chưa có ⇒ chia sẻ lên Zalo/Facebook mất ảnh xem trước). Khi có tên miền: gắn vào Pages → đổi `baseUrl` + biến `SITE_URL` sang tên miền → build/deploy →
-  rồi mới bật `CANONICAL_REDIRECT=on` (middleware tự bỏ qua nếu baseUrl trùng host hiện tại, tránh vòng lặp).
+  đăng nhập bằng Google). Tên miền **`nhaxinhminhthuy.com` mua 21/11/2026 ở Cloudflare Registrar** (chủ thể: Hộ kinh doanh Nguyễn Trường Giang; zone
+  `e6a09f107feb3ff0a1499fc2aea88a38`, NS naomi/yisroel.ns.cloudflare.com). Đã gắn vào Pages: `nhaxinhminhthuy.com` + `www` (CNAME proxied → pages.dev),
+  `www` → 301 về tên miền gốc (middleware, luôn bật). `baseUrl` + biến `SITE_URL` (production + preview) = `https://nhaxinhminhthuy.com`.
+  Link cũ `nhaxinhminhthuy-bds.pages.dev` VẪN chạy bình thường (canonical/og đã trỏ tên miền). **`CANONICAL_REDIRECT` CHƯA bật — cố ý**: quảng cáo
+  TikTok/Facebook đang trỏ pages.dev; bật 301 thì mỗi lượt bấm quảng cáo thêm 1 bước chuyển (chậm trên 4G) mà đo chuyển đổi không lợi gì (pixel chạy được ở
+  cả 2 host). Quảng cáo mới dùng tên miền; khi quảng cáo cũ tắt hết mới bật `CANONICAL_REDIRECT=on` (middleware bỏ qua nếu baseUrl trùng host, không vòng lặp;
+  preview `<x>.nhaxinhminhthuy-bds.pages.dev` không bị chuyển).
 - CRM tại `/crm/` — **tạm** đặt trong dự án Supabase `giang-ai-marketing-os` (ref `otolussdwersbctkveot`), schema riêng `nx`.
   (Dự án cũ `giang-quant-dashboard` bị Supabase tạm dừng do 1 tuần không hoạt động + gói miễn phí chỉ 2 dự án chạy; dữ liệu cũ còn trong đó.)
 
@@ -41,8 +44,15 @@ repo GitHub trống, code chỉ nằm trong 1 file zip ở Downloads rồi bị 
 - TikTok pixel `DBKSTGRC77UFMFQA75Q0`, Meta pixel `1561410692372628`: gắn thẳng trong trang (tải sau `load`) + gửi từ máy chủ, cùng `event_id`.
 - **GTM chỉ cho thẻ Google** (Google Ads, GA4). TUYỆT ĐỐI không thêm thẻ TikTok/Meta trong GTM. dataLayer có:
   `lead_submit` (event_id, lead_mode, user_data.sha256_phone_number → dùng cho Lượt chuyển đổi nâng cao), `contact_click` (contact_kind call|zalo), `video_play`.
-- Google Ads trong GTM: thẻ Chuyển đổi "Gửi form" kích hoạt bằng sự kiện tuỳ chỉnh `lead_submit`, Transaction ID = biến DL `event_id`;
-  "Bấm Gọi/Zalo" bằng `contact_click`. Thẻ Google (AW-…) chạy trên All Pages.
+- Google Ads: tài khoản **225-186-9515** (đăng nhập Google Hungnguyen2511ab@gmail.com, `authuser=1`), mã **AW-17918172769**. 2 hành động chuyển đổi
+  (chính, đếm "Một"): "Gửi form" nhãn `u1xuCLTA37wdEOG8huBC`, "Bấm Gọi/Zalo" nhãn `KBSECLfA37wdEOG8huBC`.
+- GTM **GTM-NV7HRR4B** (Google truonggiang2511a@gmail.com, tài khoản GTM "Nhà Xinh Minh Thuỳ"; tên container vẫn ghi netlify cũ — chỉ là tên), gắn trong
+  `data/site.json → tracking.gtmId`, `build.mjs` tải gtm.js sau `load` + lúc rảnh (sự kiện đẩy trước đó vẫn xếp hàng trong dataLayer). Phiên bản 6 (21/11):
+  thẻ "Điền Form thành công." ← trình kích hoạt `CE - lead_submit`; thẻ "Ads - Bấm Gọi/Zalo (contact_click)" ← `CE - contact_click`; cả 2 Transaction ID =
+  `{{DLV - event_id}}`; thẻ "Google Ads AW-17918172769" (loại Google Ads — GTM tự thêm, thay thẻ Google) chạy Initialization. Biến `DLV - event_id`, `DLV - user_data`.
+  Đã TẠM DỪNG mọi thẻ tài khoản cũ AW-17767188385 (Lượt Click Zalo, Lượt xem trang, Thẻ Google cũ, và thẻ tên "Trình liên kết chuyển đổi" — thực ra là
+  thẻ CHUYỂN ĐỔI chạy All Pages, đừng bật lại). Đã thử trên preview: `/pagead/conversion/17918172769/` đúng nhãn + `oid` = event_id (2 lượt thử
+  `test_gtm_2111_*` có thể hiện trong Ads). gtm.js cache trình duyệt 15 phút → sau khi xuất bản, chờ ~15 phút mới thấy bản mới ở máy đã vào trang.
 - Video YouTube đầu trang **tự chạy tắt tiếng** (Giang chọn 21/11 — trước đó bấm ▶ thì màn đen 2–3 s, khách dễ thoát). HTML vẫn chỉ có ảnh bìa (LCP, test kiểm);
   `app.js` chèn iframe `youtube-nocookie` (`autoplay=1&mute=1&loop=1&enablejsapi=1`) SAU sự kiện `load`, nằm DƯỚI ảnh bìa; YouTube báo `playerState 1`
   (postMessage `listening`) mới đặt `data-on="auto"` → ảnh mờ dần, hiện nút "🔊 Bật tiếng" (postMessage `unMute` + `setVolume 100`, đẩy `video_play`
@@ -90,7 +100,7 @@ CLOUDFLARE_API_TOKEN=… CLOUDFLARE_ACCOUNT_ID=… npx wrangler pages deploy dis
   `/home/claude/.cf_env` (không commit). Tạo lại: dash.cloudflare.com → Profile → API tokens → Create token → Start from scratch → Account policy
   (Cloudflare Pages Edit) + Zone policy (DNS Edit) → 7 days. Token chỉ có quyền theo tài khoản nên `GET /accounts` trả rỗng — lấy account ID từ URL dashboard.
 - Biến môi trường đặt bằng API `PATCH /accounts/{id}/pages/projects/nhaxinhminhthuy-bds` (`deployment_configs.{production|preview}.env_vars`, gộp từng khoá).
-  Preview chỉ có `CRM_INGEST_SECRET` + `SITE_URL` → form ở preview vào CRM nhưng KHÔNG gửi Telegram/TikTok/Facebook (thử thoải mái).
+  Preview chỉ có `CRM_INGEST_SECRET` + `SITE_URL` (= tên miền, như production) → form ở preview vào CRM nhưng KHÔNG gửi Telegram/TikTok/Facebook (thử thoải mái).
   Production còn `SUPABASE_URL`/`SUPABASE_PUBLISHABLE_KEY` của bản cũ — code KHÔNG đọc nữa (đổi sang `CRM_SUPABASE_URL|KEY`, mặc định lấy `data/site.json`).
 - Quay lại bản cũ nếu lỗi: Cloudflare → Pages → nhaxinhminhthuy-bds → Deployments → bản `904b7ba3` (03/11, bản trước khi dựng lại) → Rollback.
 - Secret trên Cloudflare (Settings → Variables): `CRM_INGEST_SECRET` (mới 21/11), `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`,
@@ -133,13 +143,11 @@ CLOUDFLARE_API_TOKEN=… CLOUDFLARE_ACCOUNT_ID=… npx wrangler pages deploy dis
 - Tiêu đề video YouTube ghi "135m²", sổ ghi 138 m² → trang giữ 138 m² theo sổ; nên sửa tiêu đề video cho khớp.
 
 ## 8. Việc còn chờ
-- Mã GTM (`tracking.gtmId`) + cấu hình thẻ Google Ads trong GTM (mục 3). Tình trạng 21/11 (Google truonggiang2511a@gmail.com):
-  Google Ads đang dùng **124-440-6068 "Nhà Xinh Minh Thùy" còn kẹt ở "Tạo chiến dịch đầu tiên"** (vào trang Chuyển đổi bị đẩy về trình hướng dẫn) →
-  phải hoàn tất thiết lập (ngân sách + thanh toán — Giang tự làm) mới tạo được chuyển đổi. Các tài khoản khác đều đã huỷ/đóng (918-369-8280 là bản cũ).
-  GTM có sẵn: tài khoản "Nhà Xinh Minh Thuỳ" → container **GTM-NV7HRR4B** (bản Netlify cũ, chỉ có thẻ Google: AW-17767188385, chuyển đổi click_call /
-  click_zalo / form_submit_success, trình liên kết chuyển đổi — không có thẻ TikTok/Meta) — dùng lại được: đổi kích hoạt sang `lead_submit` /
-  `contact_click` (contact_kind) + Transaction ID `event_id`, thay mã AW + nhãn của tài khoản mới. Tài khoản "nhaxinhminhthuy" còn GTM-5FDCX8TX,
-  GTM-52TCQ75H, GTM-MTCT4JQW (web khác). Trình duyệt trong app hiện cảnh báo "Turn off ad blockers" ở Google Ads.
-- Tên miền: giỏ hàng Cloudflare đã có nhaxinhminhthuy.com (11,17 USD/năm), chờ thông tin chủ tên miền + thanh toán của Giang.
+- Google Ads 225-186-9515: **Lượt chuyển đổi nâng cao** (enhanced conversions) chưa bật — cần Giang đồng ý điều khoản dữ liệu khách hàng của Google
+  (ô "Đồng ý và hoàn tất" ở trang chuyển đổi). Bật xong: thêm dữ liệu do người dùng cung cấp (SĐT băm `user_data.sha256_phone_number`) vào thẻ "Gửi form".
+  Tài khoản báo **"Đã hết số dư tài khoản"** → nạp tiền mới chạy được chiến dịch. 124-440-6068 (kẹt trình hướng dẫn) và 918-369-8280 (cũ) không dùng.
+  GTM khác (tài khoản "nhaxinhminhthuy"): GTM-5FDCX8TX, GTM-52TCQ75H, GTM-MTCT4JQW — web khác, không đụng.
+- Quảng cáo TikTok/Facebook còn trỏ `nhaxinhminhthuy-bds.pages.dev` → quảng cáo mới dùng `https://nhaxinhminhthuy.com/…`; tắt hết quảng cáo cũ thì bật `CANONICAL_REDIRECT`.
+- Lượt thử cần xoá khi Giang đồng ý: lead #4 + các lượt bấm thử trong CRM.
 - Dữ liệu CRM cũ trong dự án `giang-quant-dashboard` (đang dừng) — chép sang khi bật lại được.
 - Chuyển CRM ra dự án Supabase riêng khi nâng gói hoặc có tài khoản mới.
