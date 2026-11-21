@@ -29,6 +29,7 @@ repo GitHub trống, code chỉ nằm trong 1 file zip ở Downloads rồi bị 
 | `functions/api/contact.js` | Bấm Gọi/Zalo → `nx_ingest_click` + `Contact` TikTok/Facebook |
 | `functions/api/events.js` | Sale đổi trạng thái → TikTok/Facebook (Khách thật→ApplicationApproval/QualifiedLead, Hẹn xem→Schedule, Đặt cọc+tiền→Purchase) |
 | `functions/_middleware.js` | 301 pages.dev → tên miền (bật bằng `CANONICAL_REDIRECT=on`) |
+| `tools/ban-do.py` + `data/nha/<slug>.map.json` | Vẽ bản đồ vị trí (ngang 1600 + dọc 1170, kèm bản 800): nền vệ tinh Esri, ranh = relation OSM, đường đi OSRM, ô phóng to điểm ranh. Vị trí nhãn chỉnh trong `.map.json` (`pos`, `pos_v` = tỉ lệ khung) |
 | `supabase/migrations/` | Schema `nx` + các hàm `public.nx_*` |
 | `test/` | `functions.mjs` (13 ca, fetch giả), `page.mjs` (kiểm trang dựng) — `npm test` |
 
@@ -84,6 +85,12 @@ CLOUDFLARE_API_TOKEN=… CLOUDFLARE_ACCOUNT_ID=… npx wrangler pages deploy dis
   (data căn: `downPct`, `loanNote`, `strengths`). Giang khẳng định nhà ĐÃ hoàn công (trang sổ đang đăng ghi "Nhà ở: -/-" → nên đăng thêm
   ảnh trang hoàn công đã che số). "Qua ranh chỉ 3 bước chân" → ghi số đo thật **khoảng 23 m** (ranh TP.HCM relation OSM 1973756, đo 11/2026). Pixel TikTok/Meta vẫn tải sau `load` (chặn ~0,5 s luồng chính) —
   KHÔNG dời tới lúc khách chạm vì sẽ mất PageView/ViewContent của khách thoát nhanh (nền tảng tối ưu kém hơn).
+- 21/11 bản đồ vị trí làm lại: nền **vệ tinh Esri** (Carto giờ đòi khoá API — ra ô "API KEY REQUIRED"; Overpass bị chặn → lấy dữ liệu bằng
+  OSM API `/map?bbox=`). Đo lại bằng hình học: nhà → ranh TP.HCM **23,2 m**. Ô tròn phóng to z18 thấy rõ điểm ranh. Ghi nguồn: © Esri, © OpenStreetMap, OSRM.
+- 21/11 thêm **Làng Đại học Hưng Long** lên bản đồ (`zones` trong `.map.json`: ghim 🎓 + thẻ vàng + đường đi OSRM chấm vàng 3,6 km/8 phút).
+  KHÔNG có ranh công khai (chưa có polygon OSM/GIS; đồ án KĐT Hưng Long ~1.512,7 ha mới lấy ý kiến 28/7–18/8/2026, Vingroup được giao phối hợp lập quy hoạch;
+  khu đại học phía Bắc ~293,3 ha, phía Nam ~60,3 ha) → chỉ ghim **vị trí tham khảo**, không tự vẽ ranh. Phía Nam KĐT giáp Đ. Đoàn Nguyễn Tuấn (tô mờ `style: minor`).
+  Ảnh bìa nhà tách khỏi điểm ghim (`house.photoPos[_v]`, `cardSide[_v]`) để không che đường; `MAPDEBUG=1` in toạ độ màn hình các điểm để chỉnh nhãn.
 - Tiêu đề video YouTube ghi "135m²", sổ ghi 138 m² → trang giữ 138 m² theo sổ; nên sửa tiêu đề video cho khớp.
 
 ## 8. Việc còn chờ

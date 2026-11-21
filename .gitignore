@@ -3,3 +3,4 @@ dist/
 .wrangler/
 test/shots/
 .dev.vars
+tools/.cache/

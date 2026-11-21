@@ -271,7 +271,7 @@ ${heroHtml(h)}
 
 // ---------- các căn ----------
 const dir = path.join(ROOT, 'data/nha');
-const houses = fs.readdirSync(dir).filter((f) => f.endsWith('.json')).map((f) => JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8')))
+const houses = fs.readdirSync(dir).filter((f) => f.endsWith('.json') && !f.endsWith('.map.json')).map((f) => JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8')))
   .filter((h) => h.status !== 'an');
 for (const h of houses) write(`${h.slug}/index.html`, housePage(h));
 
