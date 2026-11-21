@@ -46,7 +46,7 @@ function logout(expired) { try { localStorage.removeItem(PASS_KEY); } catch { /*
 const S = { leads: [], filter: 'Tất cả', q: '', house: '', src: '', limit: 200, open: null, tab: 'list', range: 30, lastMax: 0 };
 // Mức chất lượng theo trạng thái hiện tại (âm = loại)
 const STAGE = { 'Mới': 0, 'Đã gọi': 1, 'Khách thật': 2, 'Hẹn xem nhà': 3, 'Đã xem nhà': 4, 'Đặt cọc': 5, 'Không liên lạc được': -1, 'Sai số / Rác': -2 };
-const SHORT = { tiktok_ads: 'TikTok QC', facebook_ads: 'Facebook QC', facebook: 'Facebook', tiktok: 'TikTok', zalo: 'Zalo', google: 'Google', youtube: 'YouTube', referral: 'Giới thiệu', offline: 'Biển bán', direct: 'Trực tiếp' };
+const SHORT = { tiktok_ads: 'TikTok QC', facebook_ads: 'Facebook QC', facebook: 'Facebook', tiktok: 'TikTok', zalo_ads: 'Zalo QC', zalo: 'Zalo', google: 'Google', youtube: 'YouTube', referral: 'Giới thiệu', offline: 'Biển bán', direct: 'Trực tiếp' };
 const srcShort = (l) => SHORT[sourceKey(l)] || sourceLabel(l);
 const money = (v) => (v >= 1e9 ? (v / 1e9).toFixed(2).replace(/\.?0+$/, '').replace('.', ',') + ' tỷ' : Math.round(v / 1e6).toLocaleString('vi-VN') + ' triệu');
 const pct = (a, b) => (b ? Math.round((a / b) * 100) : 0);

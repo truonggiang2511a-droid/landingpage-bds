@@ -83,7 +83,7 @@ body.crm{padding-bottom:24px;background:#F6F8F6}
 .lead .meta .src{background:#F1F3F2;color:var(--ink2)}
 .lead .meta .s-tiktok_ads,.lead .meta .s-tiktok{background:#111;color:#fff}
 .lead .meta .s-facebook_ads,.lead .meta .s-facebook{background:#E7F0FF;color:#1D4ED8}
-.lead .meta .s-zalo{background:#E0F2FE;color:#0369A1}
+.lead .meta .s-zalo_ads,.lead .meta .s-zalo{background:#E0F2FE;color:#0369A1}
 /* Báo cáo */
 #reportView .chips{margin-top:12px}
 .kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:6px 0 10px}

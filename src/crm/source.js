@@ -7,11 +7,13 @@
 // YouTube với Google Tìm kiếm thì đặt "Hậu tố URL cuối cùng" theo từng chiến dịch:
 //                         Tìm kiếm utm_source=google&utm_medium=paid&utm_campaign=<ten-chien-dich>
 //                         YouTube  utm_source=youtube&utm_medium=paid&utm_campaign=<ten-chien-dich>
+// Zalo Ads (quảng cáo Website): utm_source=zalo&utm_medium=paid&utm_campaign=<ten> → "Zalo quảng cáo"; link ngắn -zalo (organic) → "Zalo".
 export const SOURCES = [
   { key: 'tiktok_ads', label: 'TikTok quảng cáo' },
   { key: 'facebook_ads', label: 'Facebook quảng cáo' },
   { key: 'google_ads', label: 'Google quảng cáo' },
   { key: 'youtube_ads', label: 'YouTube quảng cáo' },
+  { key: 'zalo_ads', label: 'Zalo quảng cáo' },
   { key: 'facebook', label: 'Facebook (chưa rõ QC hay bài đăng)' },
   { key: 'tiktok', label: 'TikTok tự nhiên' },
   { key: 'zalo', label: 'Zalo' },
@@ -35,7 +37,7 @@ export function sourceKey(l) {
   if (l.ttclid) return 'tiktok_ads'; // TikTok chỉ gắn ttclid khi bấm từ quảng cáo
   if (/tiktok/.test(us)) return ORGANIC.test(um) ? 'tiktok' : (PAID.test(um) || !um ? 'tiktok_ads' : 'tiktok');
   if (/^(facebook|fb|instagram|ig|meta|messenger)/.test(us)) return ORGANIC.test(um) ? 'facebook' : 'facebook_ads';
-  if (/zalo/.test(us)) return 'zalo';
+  if (/zalo/.test(us)) return PAID.test(um) ? 'zalo_ads' : 'zalo';
   if (/youtube|^yt$/.test(us)) return ORGANIC.test(um) ? 'youtube' : (PAID.test(um) || gc ? 'youtube_ads' : 'youtube');
   if (/google|gads|adwords/.test(us)) return ORGANIC.test(um) ? 'google' : 'google_ads';
   if (gc) return 'google_ads';

@@ -38,7 +38,7 @@ repo GitHub trống, code chỉ nằm trong 1 file zip ở Downloads rồi bị 
 | `tools/ban-do.py` + `data/nha/<slug>.map.json` | Vẽ bản đồ vị trí (ngang 1600 + dọc 1170, kèm bản 800): nền vệ tinh Esri, ranh = relation OSM, đường đi OSRM, ô phóng to điểm ranh. Vị trí nhãn chỉnh trong `.map.json` (`pos`, `pos_v` = tỉ lệ khung) |
 | `tools/xem-thu.py` | Bản xem thử gửi Giang (artifact claude.ai): lấy `dist/<slug>` → `xem-thu/` (bỏ pixel, form demo, dải báo). Đăng lại bằng publish_files, artifact `0286d960-a184-40fd-86d4-eb5b6564c7a2` |
 | `supabase/migrations/` | Schema `nx` + các hàm `public.nx_*` |
-| `test/` | `functions.mjs` (16 ca, fetch giả), `page.mjs` (kiểm trang dựng) — `npm test` |
+| `test/` | `functions.mjs` (16 ca, fetch giả), `page.mjs` (kiểm trang dựng), `source.mjs` (phân loại nguồn CRM) — `npm test` |
 
 ## 3. Đo chuyển đổi — KHÔNG đếm trùng
 - TikTok pixel `DBKSTGRC77UFMFQA75Q0`, Meta pixel `1561410692372628`: gắn thẳng trong trang (tải sau `load`) + gửi từ máy chủ, cùng `event_id`.
@@ -57,6 +57,10 @@ repo GitHub trống, code chỉ nằm trong 1 file zip ở Downloads rồi bị 
   GTM v7: thẻ "Điền Form thành công." có Tham số sự kiện `user_data` = biến "UPD - SDT bam (Gui form)" (Dữ liệu do người dùng cung cấp → Manual →
   Điện thoại = `{{DLV - sha256_phone}}` = DL `user_data.sha256_phone_number`). Đã thử: request gửi `em=tv.1~pn.<sha256 hex>` nguyên mã băm (không băm lại),
   `ec_mode=m` (lượt thử `test_ec_2111`). Thẻ "Bấm Gọi/Zalo" không có SĐT (khách chưa để lại số). gtm.js cache trình duyệt 15 phút → sau khi xuất bản, chờ ~15 phút mới thấy bản mới ở máy đã vào trang.
+- **Zalo Ads** (21/11, chưa có tài khoản): `data/site.json → tracking.zaloPixelSnippet` = dán NGUYÊN mã pixel Zalo đưa (Zalo Ads → Thư viện →
+  Conversion → Lấy mã pixel), để trống = không tải gì. Chuyển đổi Zalo tạo trong Zalo Ads bằng "sự kiện nút bấm" theo ID: `leadBtn` (Gửi form — tính cả lượt
+  bấm chưa hợp lệ), `barCall` (Gọi), `barZalo` (Zalo) ở thanh đáy. Link QC: `?utm_source=zalo&utm_medium=paid&utm_campaign=<ten>` → CRM nguồn "Zalo quảng cáo"
+  (`zalo_ads`); link ngắn `/ltt-zalo` (organic) vẫn là "Zalo". Gắn mã xong: thử trên preview trước. Deploy 21/11: preview `15b97547`, chính `5c69cf19`.
 - Video YouTube đầu trang **tự chạy tắt tiếng** (Giang chọn 21/11 — trước đó bấm ▶ thì màn đen 2–3 s, khách dễ thoát). HTML vẫn chỉ có ảnh bìa (LCP, test kiểm);
   `app.js` chèn iframe `youtube-nocookie` (`autoplay=1&mute=1&loop=1&enablejsapi=1`) SAU sự kiện `load`, nằm DƯỚI ảnh bìa; YouTube báo `playerState 1`
   (postMessage `listening`) mới đặt `data-on="auto"` → ảnh mờ dần, hiện nút "🔊 Bật tiếng" (postMessage `unMute` + `setVolume 100`, đẩy `video_play`
@@ -179,6 +183,6 @@ CLOUDFLARE_API_TOKEN=… CLOUDFLARE_ACCOUNT_ID=… npx wrangler pages deploy dis
   (BM Lumi) hoạt động nhưng connector chưa thao tác được. Pixel web `1561410692372628` connector không thấy → nằm ở BM/người dùng khác.
   Chạy video về web: mục tiêu Khách hàng tiềm năng → Trang web → sự kiện Lead (không chạy Lưu lượng truy cập); nhắm VN không bắt buộc Danh mục đặc biệt Nhà ở.
 - Quảng cáo TikTok/Facebook còn trỏ `nhaxinhminhthuy-bds.pages.dev` → quảng cáo mới dùng `https://nhaxinhminhthuy.com/…`; tắt hết quảng cáo cũ thì bật `CANONICAL_REDIRECT`.
-- Lượt thử cần xoá khi Giang đồng ý: lead #4 + các lượt bấm thử trong CRM.
+- Lượt thử cần xoá khi Giang đồng ý: lead #4 + các lượt bấm thử trong CRM (gồm click #7 `test_zalo_preview_2111`).
 - Dữ liệu CRM cũ trong dự án `giang-quant-dashboard` (đang dừng) — chép sang khi bật lại được.
 - Chuyển CRM ra dự án Supabase riêng khi nâng gói hoặc có tài khoản mới.
