@@ -51,9 +51,9 @@ function trackingHead() {
   if (T.metaPixelId) h += `<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];f.addEventListener('load',function(){(f.requestIdleCallback||setTimeout)(function(){t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)},{timeout:2500})})}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init',${JSON.stringify(T.metaPixelId)});fbq('track','PageView');</script>\n`;
   // GTM — CHỈ cho thẻ Google (Google Ads, GA4). Sự kiện trong dataLayer: lead_submit, contact_click, video_play.
   if (T.gtmId) h += `<script>window.dataLayer=window.dataLayer||[];window.dataLayer.push({'gtm.start':Date.now(),event:'gtm.js'});addEventListener('load',function(){(window.requestIdleCallback||setTimeout)(function(){var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtm.js?id=${esc(T.gtmId)}';document.head.appendChild(s)},{timeout:2000})});</script>\n`;
-  // Zalo Ads pixel: dán NGUYÊN đoạn mã Zalo đưa (Zalo Ads → Thư viện → Conversion → Lấy mã pixel) vào tracking.zaloPixelSnippet.
-  // Chuyển đổi Zalo đo theo "sự kiện nút bấm" (ID phần tử): leadBtn = Gửi form, barCall = Gọi, barZalo = Zalo (thanh đáy).
-  if (T.zaloPixelSnippet) h += T.zaloPixelSnippet.trim() + '\n';
+  // Zalo Ads pixel (ID lấy ở Zalo Ads → Thư viện → Conversion → Lấy mã Pixel; mã gốc Zalo: <script async src="https://s.zzcdn.me/ztr/ztracker.js?id=ID">).
+  // Tải sau load + lúc rảnh như TikTok/Meta. Chuyển đổi Zalo đo theo "sự kiện nút bấm" (ID phần tử): leadBtn = Gửi form, barCall = Gọi, barZalo = Zalo.
+  if (T.zaloPixelId) h += `<script>addEventListener("load",function(){(window.requestIdleCallback||setTimeout)(function(){var s=document.createElement("script");s.async=!0;s.src="https://s.zzcdn.me/ztr/ztracker.js?id="+${JSON.stringify(String(T.zaloPixelId))};document.head.appendChild(s)},{timeout:2500})});</script>\n`;
   if (T.metaDomainVerification) h += `<meta name="facebook-domain-verification" content="${esc(T.metaDomainVerification)}">\n`;
   return h;
 }

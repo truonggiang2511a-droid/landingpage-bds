@@ -18,6 +18,9 @@ for (const h of houses) {
   t(`${h.slug}: pixel TikTok/Meta đúng mã, link chia sẻ/canonical trỏ đúng baseUrl đang chạy`, () => {
     if (SITE.tracking.tiktokPixelId) assert.ok(html.includes(SITE.tracking.tiktokPixelId));
     if (SITE.tracking.metaPixelId) assert.ok(html.includes(SITE.tracking.metaPixelId));
+    // Zalo Ads: pixel tải sau load + 3 nút có ID cố định (chuyển đổi Zalo đo theo ID nút) — đổi ID là mất đo
+    if (SITE.tracking.zaloPixelId) assert.ok(html.includes('ztracker.js?id=') && html.includes(SITE.tracking.zaloPixelId), 'thiếu pixel Zalo');
+    for (const id of ['leadBtn', 'barCall', 'barZalo']) assert.ok(html.includes(`id="${id}"`), 'thiếu id ' + id);
     // canonical, og:url, og:image phải trỏ về baseUrl (đang là pages.dev khi chưa có tên miền) — trỏ tên miền chết = mất ảnh xem trước khi chia sẻ
     const base = SITE.baseUrl.replace(/\/$/, '');
     for (const m of html.matchAll(/(?:rel="canonical" href|property="og:(?:url|image)" content)="([^"]+)"/g)) assert.ok(m[1].startsWith(base), 'link lệch baseUrl: ' + m[1]);

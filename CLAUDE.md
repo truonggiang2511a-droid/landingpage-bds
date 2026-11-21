@@ -57,10 +57,14 @@ repo GitHub trống, code chỉ nằm trong 1 file zip ở Downloads rồi bị 
   GTM v7: thẻ "Điền Form thành công." có Tham số sự kiện `user_data` = biến "UPD - SDT bam (Gui form)" (Dữ liệu do người dùng cung cấp → Manual →
   Điện thoại = `{{DLV - sha256_phone}}` = DL `user_data.sha256_phone_number`). Đã thử: request gửi `em=tv.1~pn.<sha256 hex>` nguyên mã băm (không băm lại),
   `ec_mode=m` (lượt thử `test_ec_2111`). Thẻ "Bấm Gọi/Zalo" không có SĐT (khách chưa để lại số). gtm.js cache trình duyệt 15 phút → sau khi xuất bản, chờ ~15 phút mới thấy bản mới ở máy đã vào trang.
-- **Zalo Ads** (21/11, chưa có tài khoản): `data/site.json → tracking.zaloPixelSnippet` = dán NGUYÊN mã pixel Zalo đưa (Zalo Ads → Thư viện →
-  Conversion → Lấy mã pixel), để trống = không tải gì. Chuyển đổi Zalo tạo trong Zalo Ads bằng "sự kiện nút bấm" theo ID: `leadBtn` (Gửi form — tính cả lượt
-  bấm chưa hợp lệ), `barCall` (Gọi), `barZalo` (Zalo) ở thanh đáy. Link QC: `?utm_source=zalo&utm_medium=paid&utm_campaign=<ten>` → CRM nguồn "Zalo quảng cáo"
-  (`zalo_ads`); link ngắn `/ltt-zalo` (organic) vẫn là "Zalo". Gắn mã xong: thử trên preview trước. Deploy 21/11: preview `15b97547`, chính `5c69cf19`.
+- **Zalo Ads** (tài khoản Zalo "Trường Giang", có từ 09/2025, vào bằng Chrome của Giang — Browser 2): pixel ID `7376118000094707712` trong
+  `data/site.json → tracking.zaloPixelId`; build tải `https://s.zzcdn.me/ztr/ztracker.js?id=…` sau load + lúc rảnh (gửi về `log.adtimaserver.vn`).
+  Conversion tạo 21/11 (Thư viện → Conversion), trang đích "Có chứa" `https://nhaxinhminhthuy.com/nha-mat-tien-le-thi-tam-phuoc-ly` (link pages.dev KHÔNG tính):
+  "LTT - Gửi form (web nhaxinhminhthuy)" loại Trở thành KH tiềm năng = nút `leadBtn` (tính cả lượt bấm chưa hợp lệ — số khách thật xem CRM);
+  "LTT - Bấm Gọi/Zalo (web nhaxinhminhthuy)" loại Liên hệ = nút `barCall` + `barZalo` (thanh đáy). Đổi/xoá 3 ID này = mất đo (test/page.mjs kiểm).
+  Conversion cũ "Liên hệ…" là của landing cũ diamondmcn.com. Link QC: `?utm_source=zalo&utm_medium=paid&utm_campaign=<ten>` → CRM "Zalo quảng cáo"
+  (`zalo_ads`); link ngắn `/ltt-zalo` (organic) vẫn là "Zalo". Số dư 0đ (21/11). Zalo yêu cầu xác nhận lại thông tin/thoả thuận cá nhân trước 30/11/2026
+  (Giang tự làm). Deploy: preview `d99ec460` (đã thử trong Chrome: ztracker + TikTok + Meta + GTM đều tải), chính `d9e947ac`.
 - Video YouTube đầu trang **tự chạy tắt tiếng** (Giang chọn 21/11 — trước đó bấm ▶ thì màn đen 2–3 s, khách dễ thoát). HTML vẫn chỉ có ảnh bìa (LCP, test kiểm);
   `app.js` chèn iframe `youtube-nocookie` (`autoplay=1&mute=1&loop=1&enablejsapi=1`) SAU sự kiện `load`, nằm DƯỚI ảnh bìa; YouTube báo `playerState 1`
   (postMessage `listening`) mới đặt `data-on="auto"` → ảnh mờ dần, hiện nút "🔊 Bật tiếng" (postMessage `unMute` + `setVolume 100`, đẩy `video_play`
