@@ -239,6 +239,7 @@ ${heroHtml(h)}
 </div></footer>
 
 <nav class="bar" id="bar" aria-label="Liên hệ nhanh">
+  <p class="bar-t"><b>Anh/chị muốn xem nhà thực tế?</b> <span>Dẫn xem tận nơi, miễn phí</span></p>
   <a class="bar-call" href="${telHref}">${ic('phone')}<span>Gọi ngay</span></a>
   <a class="bar-zalo" href="${SITE.zalo}" target="_blank" rel="noopener">${ic('zalo')}<span>Zalo</span></a>
   <a class="bar-main" href="#dat-lich" data-mode="xem">${ic('calendar')}<span>Đặt lịch xem</span></a>

@@ -477,3 +477,10 @@ body.lock{overflow:hidden}
 .nudge-btns .btn{gap:6px;font-size:15px}
 .nudge-zalo{background:#EAF2FF;color:#0068FF;font-weight:700}
 .nudge-zalo .ic{color:#0068FF}
+
+/* Dòng chữ mời trên thanh nút đáy (Giang thích câu của thẻ nhắc, 21/11) */
+:root{--bar:88px}
+.bar{row-gap:6px;padding-top:7px}
+.bar-t{grid-column:1/-1;text-align:center;font-size:13px;line-height:1.25;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-t b{color:var(--g8);font-weight:700}
+@media (max-width:359px){.bar-t span{display:none}}
