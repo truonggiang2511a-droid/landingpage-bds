@@ -13,6 +13,7 @@ const T = SITE.tracking || {};
 
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const vnd = (n) => new Intl.NumberFormat('vi-VN').format(n);
+const ty = (n) => (n >= 1e9 ? `${(n / 1e9).toLocaleString('vi-VN', { maximumFractionDigits: 2 })} tỷ` : `${Math.round(n / 1e6).toLocaleString('vi-VN')} triệu`);
 const telHref = `tel:${SITE.phone}`;
 
 function rmrf(p) { fs.rmSync(p, { recursive: true, force: true }); }
@@ -93,8 +94,12 @@ function heroHtml(h) {
     ${SITE.slogan ? `<p class="slogan">${esc(SITE.slogan)}</p>` : ''}
     <p class="hero-tag">${ic('pin')}<span>${esc(h.tag)}</span></p>
     <h1>${esc(h.name)}</h1>
-    <div class="hero-price"><span class="price">${esc(h.priceText)}</span>${h.priceOld ? `<span class="price-old">${esc(h.priceOld)}</span>` : ''}<span class="price-note">${esc(h.priceNote)}</span></div>
-    <p class="hero-sub">${esc(h.sub)}</p>
+    ${h.downPct ? `<div class="hero-price hp-down">
+      <span class="hp-l">Trả trước chỉ từ</span>
+      <span class="hp-row"><span class="price">${esc(ty(h.price * h.downPct / 100))}</span><span class="hp-pct">${h.downPct}%</span></span>
+      <span class="hp-sub">Giá ${esc(h.priceText)}${h.priceOld ? ` <s>${esc(h.priceOld)}</s>` : ''} · ${esc(h.loanNote || h.priceNote)}</span>
+    </div>` : `<div class="hero-price"><span class="price">${esc(h.priceText)}</span>${h.priceOld ? `<span class="price-old">${esc(h.priceOld)}</span>` : ''}<span class="price-note">${esc(h.priceNote)}</span></div>`}
+    ${(h.strengths || []).length ? `<ul class="strengths">${h.strengths.map((x) => `<li>${ic('check')}<span>${esc(x)}</span></li>`).join('')}</ul>` : `<p class="hero-sub">${esc(h.sub)}</p>`}
     <ul class="chips">${h.chips.map((c, i) => `<li>${ic(h.chipIcons[i] || 'check')}<span>${esc(c)}</span></li>`).join('')}</ul>
     <div class="hero-cta" id="heroCta">
       <a class="btn btn-primary" href="#dat-lich" data-mode="xem">${ic('calendar')}Đặt lịch xem nhà</a>
@@ -111,7 +116,6 @@ function heroHtml(h) {
   <div class="hero-video"><div class="vid" data-yt="${esc(h.video.youtube)}" role="button" tabindex="0" aria-label="Phát video: ${esc(h.video.title)}">
     ${img(h.slug, h.heroImage, { sizes: '(min-width: 960px) 700px, 100vw', alt: `${h.name} – video thực tế`, lazy: false, w: [800, 1600] })}
     <span class="vid-play">${ic('play')}</span>
-    <span class="vid-price">${esc(h.priceText)}<small>${esc(h.chips[0] || '')}</small></span>
     <span class="vid-cap"><span class="dot"></span>${esc(h.video.title)}${h.video.duration ? ` · ${esc(h.video.duration)}` : ''}</span>
   </div></div>
   ${info}
@@ -136,7 +140,7 @@ function housePage(h) {
     : `<link rel="preload" as="image" media="(max-width: 719px)" href="${d}${h.heroImageMobile}-800.webp" imagesrcset="${d}${h.heroImageMobile}-800.webp 800w, ${d}${h.heroImageMobile}.webp 1600w" imagesizes="100vw">\n<link rel="preload" as="image" media="(min-width: 720px)" href="${d}${h.heroImage}-800.webp" imagesrcset="${d}${h.heroImage}-800.webp 800w, ${d}${h.heroImage}.webp 1600w" imagesizes="100vw">\n`;
   const perM2 = h.area ? `${(h.price / h.area / 1e6).toLocaleString('vi-VN', { maximumFractionDigits: 1 })} triệu/m² đất` : '';
   const spec = (k) => (h.specs.find((s) => s[0] === k) || [])[1] || '';
-  const facts = [['Giá', h.priceText], ['Diện tích', spec('Diện tích đất')], ['Kích thước', spec('Kích thước')], ['Pháp lý', 'Sổ hồng riêng']].filter((f) => f[1]);
+  const facts = [h.downPct ? [`Trả trước ${h.downPct}%`, ty(h.price * h.downPct / 100)] : null, ['Giá', h.priceText], ['Diện tích', spec('Diện tích đất')], ['Pháp lý', 'Sổ hồng · đã hoàn công']].filter((f) => f && f[1]);
   const days = ''; // ngày xem do app.js tự dựng (7 ngày tới)
 
   return `${head({ title: h.title, description: h.description, url, image: `${BASE}/nha/${h.slug}/${h.heroImage}.webp`, rel: '../',

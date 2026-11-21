@@ -477,10 +477,6 @@ body.lock{overflow:hidden}
 @media (max-width:359px){.bar-t span{display:none}}
 
 /* ===== Tối ưu màn đầu điện thoại (21/11): giá luôn thấy ngay, kể cả trong trình duyệt của TikTok/Facebook (màn ~360×640) ===== */
-.vid-price{position:absolute;top:12px;right:12px;z-index:1;display:flex;flex-direction:column;align-items:flex-end;gap:1px;padding:7px 12px;border-radius:12px;
-  background:rgba(11,59,34,.88);color:#fff;font-weight:800;font-size:19px;line-height:1.1;letter-spacing:-.01em;box-shadow:0 6px 18px rgba(0,0,0,.3);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
-.vid-price small{font-size:12px;font-weight:600;opacity:.85;letter-spacing:0}
-.hero-v .vid[data-on] .vid-price{display:none}
 @media (max-width:420px){
   .slogan{font-size:15px;margin-bottom:10px;white-space:nowrap}
   .slogan::before{display:none}
@@ -492,3 +488,17 @@ body.lock{overflow:hidden}
   .hero-v .hero-sub{font-size:15px;margin-top:8px}
   .bar-t span{display:none}
 }
+
+/* Giá theo "trả trước" (Giang 21/11: 5,6 tỷ to quá làm khách ngợp) — số trả trước to, giá tổng nhỏ bên dưới, vẫn minh bạch */
+.hp-down{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+.hp-l{font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#C9EBD3}
+.hp-row{display:flex;align-items:center;gap:10px}
+.hp-pct{font-size:14px;font-weight:800;color:var(--g9);background:#F3E3B5;border-radius:999px;padding:3px 10px}
+.hp-sub{font-size:14px;opacity:.88;line-height:1.4}
+.hp-sub s{opacity:.7}
+.strengths{list-style:none;display:grid;gap:8px;margin-top:14px}
+.strengths li{display:flex;align-items:flex-start;gap:10px;font-size:15.5px;font-weight:600;line-height:1.35}
+.strengths .ic{flex:none;width:22px;height:22px;padding:4px;border-radius:50%;background:#F3E3B5;color:var(--g9);stroke-width:3;margin-top:-1px}
+.hero-v .strengths+.chips{margin-top:14px}
+@media (max-width:420px){.hero-v .hp-down .price{font-size:38px}.strengths li{font-size:15px}}
+@media (max-width:420px){.hero-v .chips{gap:6px;flex-wrap:nowrap}.hero-v .chips li{font-size:13px;padding:6px 9px;gap:5px;white-space:nowrap}.hero-v .chips .ic{width:14px;height:14px}}

@@ -34,8 +34,8 @@
       "icon": "shop"
     },
     {
-      "title": "Sát ranh TP.HCM",
-      "text": "Ngay ranh xã Hưng Long (Bình Chánh cũ), vài phút tới chợ, UBND, trường học",
+      "title": "Sát ranh Bình Chánh, TP.HCM",
+      "text": "Qua ranh xã Hưng Long (Bình Chánh cũ) chỉ khoảng 23 m, vài phút tới chợ, UBND, trường học",
       "icon": "pin"
     },
     {
@@ -402,5 +402,12 @@
     "layers",
     "bed",
     "bath"
+  ],
+  "downPct": 30,
+  "loanNote": "Ngân hàng hỗ trợ vay đến 70% (tuỳ hồ sơ)",
+  "strengths": [
+    "Nhà đã hoàn công, sổ hồng riêng",
+    "Sát ranh Bình Chánh – qua ranh chỉ khoảng 23 m",
+    "Mặt tiền kinh doanh · tặng full nội thất"
   ]
 }

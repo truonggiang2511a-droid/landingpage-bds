@@ -78,8 +78,11 @@ CLOUDFLARE_API_TOKEN=… CLOUDFLARE_ACCOUNT_ID=… npx wrangler pages deploy dis
   Thanh đáy luôn có dòng mời "Anh/chị muốn xem nhà thực tế? Dẫn xem tận nơi, miễn phí" (`.bar-t`, cao thêm ~22px → `--bar:88px`).
 - 21/11 tối ưu điện thoại (Lighthouse mobile 82→91, Accessibility 97→100, FCP 2,3→1,5 s, LCP 3,0→2,4 s trên máy chủ thử không nén):
   CSS nhúng thẳng vào trang (bỏ 1 lượt tải chặn hiển thị; CRM vẫn dùng `/styles.css`), font Geist bản variable 3 file thay 12 file,
-  màu nút gọi `--call:#15803D` (đủ tương phản dưới nắng), màn đầu 360×640 (trình duyệt trong TikTok/Facebook) phải thấy GIÁ:
-  thẻ giá trên ảnh bìa video + giá đặt ngay dưới tiêu đề. Pixel TikTok/Meta vẫn tải sau `load` (chặn ~0,5 s luồng chính) —
+  màu nút gọi `--call:#15803D` (đủ tương phản dưới nắng), màn đầu 360×640 (trình duyệt trong TikTok/Facebook) phải thấy giá ngay dưới tiêu đề.
+- 21/11 Giang: "5,6 tỷ" to làm khách ngợp → bỏ thẻ giá trên video; hero hiện **"Trả trước chỉ từ 1,68 tỷ (30%)"** to, dòng nhỏ
+  "Giá 5,6 tỷ ~~5,999 tỷ~~ · Ngân hàng hỗ trợ vay đến 70% (tuỳ hồ sơ)" (giá tổng vẫn hiện — minh bạch), + 3 điểm mạnh `strengths`
+  (data căn: `downPct`, `loanNote`, `strengths`). Giang khẳng định nhà ĐÃ hoàn công (trang sổ đang đăng ghi "Nhà ở: -/-" → nên đăng thêm
+  ảnh trang hoàn công đã che số). "Qua ranh chỉ 3 bước chân" → ghi số đo thật **khoảng 23 m** (ranh TP.HCM relation OSM 1973756, đo 11/2026). Pixel TikTok/Meta vẫn tải sau `load` (chặn ~0,5 s luồng chính) —
   KHÔNG dời tới lúc khách chạm vì sẽ mất PageView/ViewContent của khách thoát nhanh (nền tảng tối ưu kém hơn).
 - Tiêu đề video YouTube ghi "135m²", sổ ghi 138 m² → trang giữ 138 m² theo sổ; nên sửa tiêu đề video cho khớp.
 
