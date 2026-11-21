@@ -309,6 +309,6 @@ write('_headers', `/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: str
 // Link ngắn gửi tay / đăng bài: /<short>-zalo … → trang căn + UTM (CRM tự ghi nguồn). 302 để đổi đích được.
 const SHORT = { zalo: ['zalo', 'organic'], yt: ['youtube', 'organic'], fb: ['facebook', 'organic'], tt: ['tiktok', 'organic'], bien: ['bien-ban', 'offline'] };
 write('_redirects', houses.filter((h) => h.short).flatMap((h) => Object.entries(SHORT).map(([k, [src, med]]) =>
-  `/${h.short}-${k} /${h.slug}/?utm_source=${src}&utm_medium=${med}&utm_campaign=${h.short}-${k} 302`)).join('\n') + '\n');
+  `/${h.short}-${k} /${h.slug}/?utm_source=${src}&utm_medium=${med}&utm_campaign=${h.short} 302`)).join('\n') + '\n');
 
 console.log(`Đã dựng ${houses.length} căn → dist/ (v=${V}, gốc ${BASE})`);

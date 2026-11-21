@@ -11,8 +11,9 @@ repo GitHub trống, code chỉ nằm trong 1 file zip ở Downloads rồi bị 
 
 ## 1. Tổng quan
 - Web tĩnh + Cloudflare Pages Functions. **1 file `data/nha/<slug>.json` = 1 trang `/<slug>/`**. `node build.mjs` → `dist/`.
-- Cloudflare Pages dự án `nhaxinhminhthuy-bds` (tài khoản Cloudflare Hungnguyen2511ab@gmail.com), tên miền `nhaxinhminhthuy.com`
-  (mua 21/11/2026 ở Cloudflare Registrar). Link cũ `nhaxinhminhthuy-bds.pages.dev` → 301 sang tên miền khi biến `CANONICAL_REDIRECT=on`.
+- Cloudflare Pages dự án `nhaxinhminhthuy-bds` (tài khoản Cloudflare Hungnguyen2511ab@gmail.com, account ID `335d210ae0fbc3ac05c5d7b9f45d0a60`,
+  đăng nhập bằng Google). Tên miền `nhaxinhminhthuy.com`: **21/11 chưa có trong tài khoản** (chưa mua xong ở Cloudflare Registrar) → web đang chạy ở
+  `nhaxinhminhthuy-bds.pages.dev`. Khi có tên miền: gắn vào Pages + đổi `SITE_URL` rồi mới bật `CANONICAL_REDIRECT=on` (bật sớm = 301 sang tên miền chết).
 - CRM tại `/crm/` — **tạm** đặt trong dự án Supabase `giang-ai-marketing-os` (ref `otolussdwersbctkveot`), schema riêng `nx`.
   (Dự án cũ `giang-quant-dashboard` bị Supabase tạm dừng do 1 tuần không hoạt động + gói miễn phí chỉ 2 dự án chạy; dữ liệu cũ còn trong đó.)
 
@@ -65,7 +66,14 @@ node build.mjs
 CLOUDFLARE_API_TOKEN=… CLOUDFLARE_ACCOUNT_ID=… npx wrangler pages deploy dist --project-name nhaxinhminhthuy-bds --branch preview   # xem thử
 … --branch main   # bản chính
 ```
-- `wrangler pages deploy dist` lấy thư mục `functions/` ở thư mục hiện tại (gốc repo) → chạy lệnh từ gốc repo.
+- `wrangler pages deploy dist` lấy thư mục `functions/` ở thư mục hiện tại (gốc repo) → chạy lệnh từ gốc repo. Thêm `--commit-dirty=true` để bỏ cảnh báo git.
+- Khoá deploy: API token `landing-deploy` (Cloudflare Pages: Edit + DNS: Edit, mọi zone của tài khoản), **hết hạn 28/11/2026**. Chỉ lưu ở máy làm việc
+  `/home/claude/.cf_env` (không commit). Tạo lại: dash.cloudflare.com → Profile → API tokens → Create token → Start from scratch → Account policy
+  (Cloudflare Pages Edit) + Zone policy (DNS Edit) → 7 days. Token chỉ có quyền theo tài khoản nên `GET /accounts` trả rỗng — lấy account ID từ URL dashboard.
+- Biến môi trường đặt bằng API `PATCH /accounts/{id}/pages/projects/nhaxinhminhthuy-bds` (`deployment_configs.{production|preview}.env_vars`, gộp từng khoá).
+  Preview chỉ có `CRM_INGEST_SECRET` + `SITE_URL` → form ở preview vào CRM nhưng KHÔNG gửi Telegram/TikTok/Facebook (thử thoải mái).
+  Production còn `SUPABASE_URL`/`SUPABASE_PUBLISHABLE_KEY` của bản cũ — code KHÔNG đọc nữa (đổi sang `CRM_SUPABASE_URL|KEY`, mặc định lấy `data/site.json`).
+- Quay lại bản cũ nếu lỗi: Cloudflare → Pages → nhaxinhminhthuy-bds → Deployments → bản `904b7ba3` (03/11, bản trước khi dựng lại) → Rollback.
 - Secret trên Cloudflare (Settings → Variables): `CRM_INGEST_SECRET` (mới 21/11), `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`,
   `TIKTOK_ACCESS_TOKEN`, `TIKTOK_PIXEL_ID`, `META_ACCESS_TOKEN`, `META_PIXEL_ID`, `SITE_URL`, (`*_TEST_EVENT_CODE` chỉ khi thử, xoá sau), `CANONICAL_REDIRECT`.
   Secret cũ `SUPABASE_*`/`APPS_SCRIPT_URL` của bản trước không còn dùng.
@@ -97,6 +105,9 @@ CLOUDFLARE_API_TOKEN=… CLOUDFLARE_ACCOUNT_ID=… npx wrangler pages deploy dis
   to ngang 2 nút kia (lưới 1.25/1/1.25), ≤380px chữ "Đặt lịch xem" rút còn "Đặt lịch" để không xuống 2 dòng; (4) bản đồ dọc chữ quá nhỏ
   (hiện ~350px) ⇒ `minimal_v` + `fsBoost_v: 1.6` trong `.map.json`: bỏ thẻ tiêu đề/nhãn đường/điểm xa, tiện ích chỉ còn số (khớp bảng dưới),
   thẻ nhà nằm dưới ảnh (`cardSide_v: "b"`).
+- 21/11 **đưa bản mới lên production** (deploy `16c2c498`). Thử thật: form → CRM ✓ Telegram ✓ TikTok SubmitForm ✓ Facebook Lead ✓; bấm Zalo → nx.clicks ✓;
+  trang nén Brotli 98 KB → 20 KB. Suýt lỗi: `functions/_lib/util.js` đọc `env.SUPABASE_URL` — production còn biến này trỏ về dự án Supabase đã dừng ⇒ lead sẽ
+  không vào CRM. Đã đổi tên biến + thêm test. Link ngắn giữ `utm_campaign=ltt` như bản cũ (báo cáo liền mạch).
 - Tiêu đề video YouTube ghi "135m²", sổ ghi 138 m² → trang giữ 138 m² theo sổ; nên sửa tiêu đề video cho khớp.
 
 ## 8. Việc còn chờ

@@ -30,7 +30,8 @@ export const str = (v, n = 300) => String(v == null ? '' : v).slice(0, n);
 
 // Gọi hàm public.nx_* trong Supabase (khoá công khai; hàm tự kiểm secret/mật khẩu).
 export async function rpc(env, fn, args, fetcher = fetch) {
-  const url = env.SUPABASE_URL || SITE.crm.supabaseUrl, key = env.SUPABASE_KEY || SITE.crm.supabaseKey;
+  // Không đọc env.SUPABASE_URL: bản cũ còn để biến này trỏ về dự án Supabase đã dừng (giang-quant-dashboard) trên Cloudflare.
+  const url = env.CRM_SUPABASE_URL || SITE.crm.supabaseUrl, key = env.CRM_SUPABASE_KEY || SITE.crm.supabaseKey;
   if (!url || !key) return { ok: false, error: 'chưa cấu hình Supabase' };
   const r = await fetcher(`${url}/rest/v1/rpc/${fn}`, {
     method: 'POST',

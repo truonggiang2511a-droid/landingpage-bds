@@ -23,6 +23,12 @@ const okRoutes = (extra = []) => [...extra,
   [/rpc\/nx_ingest_lead/, { id: 7, ok: true, duplicate_of: null }], [/rpc\/nx_ingest_log/, {}], [/rpc\/nx_ingest_click/, { ok: true }],
   [/api\.telegram\.org/, { ok: true }], [/business-api\.tiktok\.com/, { code: 0 }], [/graph\.facebook\.com/, { events_received: 1 }]];
 
+await t('lead: bỏ qua biến cũ SUPABASE_URL (dự án đã dừng) — luôn gọi CRM theo site.json', async () => {
+  const f = mockFetch(okRoutes()); const env = { ...ENV, SUPABASE_URL: 'https://old-paused.supabase.co', SUPABASE_KEY: 'old' };
+  await handleLead(req({ phone: '0912345678', event_id: 'lead_x' }), env, f);
+  const c = f.calls.find((x) => /nx_ingest_lead/.test(x.url));
+  assert.ok(c && !c.url.includes('old-paused'), c && c.url);
+});
 await t('phoneE164 chuẩn hoá', () => {
   assert.equal(phoneE164('0912 345 678'), '+84912345678'); assert.equal(phoneE164('+84 912345678'), '+84912345678'); assert.equal(phoneE164('123'), '');
 });
