@@ -171,6 +171,10 @@ CLOUDFLARE_API_TOKEN=… CLOUDFLARE_ACCOUNT_ID=… npx wrangler pages deploy dis
   · Các chiến dịch cũ (Tạo nhu cầu, Video 2026-02-02, The Sol City…) đều Bị tạm dừng/Đã kết thúc.
   Mã GTM/thẻ Google Ads trên web vẫn giữ (vô hại khi tài khoản ngưng). 124-440-6068 (kẹt trình hướng dẫn) và 918-369-8280 (cũ) không dùng.
   GTM khác (tài khoản "nhaxinhminhthuy"): GTM-5FDCX8TX, GTM-52TCQ75H, GTM-MTCT4JQW — web khác, không đụng.
+- Facebook (connector Ads_Facebook, 21/11): tài khoản QC `1191956771630072` **BỊ VÔ HIỆU** ("hoạt động bất thường", mọi QC tạm dừng — phải xác minh
+  thông tin với Facebook); `942515124812526` hoạt động nhưng không có chiến dịch, chỉ gắn pixel Vị Trí Studio; `1460386329295995` "Trường Giang"
+  (BM Lumi) hoạt động nhưng connector chưa thao tác được. Pixel web `1561410692372628` connector không thấy → nằm ở BM/người dùng khác.
+  Chạy video về web: mục tiêu Khách hàng tiềm năng → Trang web → sự kiện Lead (không chạy Lưu lượng truy cập); nhắm VN không bắt buộc Danh mục đặc biệt Nhà ở.
 - Quảng cáo TikTok/Facebook còn trỏ `nhaxinhminhthuy-bds.pages.dev` → quảng cáo mới dùng `https://nhaxinhminhthuy.com/…`; tắt hết quảng cáo cũ thì bật `CANONICAL_REDIRECT`.
 - Lượt thử cần xoá khi Giang đồng ý: lead #4 + các lượt bấm thử trong CRM.
 - Dữ liệu CRM cũ trong dự án `giang-quant-dashboard` (đang dừng) — chép sang khi bật lại được.
