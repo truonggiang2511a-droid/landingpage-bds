@@ -155,7 +155,11 @@ CLOUDFLARE_API_TOKEN=… CLOUDFLARE_ACCOUNT_ID=… npx wrangler pages deploy dis
   Đã kiểm 21/11: trang trả về Y HỆT cho người dùng và AdsBot-Google/Googlebot (200, cùng nội dung), www chỉ 301 về chính trang đó, robots không chặn AdsBot
   → không phải che giấu (cloaking). Quảng cáo LTT còn "đang xem xét", chưa bị từ chối. Không loại trừ: phiên tự động hoá trình duyệt dồn dập trong Ads
   (nhiều thao tác liên tiếp, thử tải logo lỗi, Google bật "Xác nhận danh tính" giữa chừng) → sau này thao tác Google Ads để Giang tự bấm, Claude chỉ hướng dẫn/đọc số.
-  Đơn kháng nghị Giang gửi 21/11 tối (form "Account Suspension Appeal Form", 3 bước).
+  Đơn kháng nghị (form "Account Suspension Appeal Form", 3 bước: Account details → Circumventing systems → Confirmation) 21/11 20:20 CHƯA gửi
+  (Ads → Chính sách → Account issues vẫn hiện "Start").
+  Nghi nặng nhất = **nhiều tài khoản**: login truonggiang2511a có 861-159-6462 (đã đóng), 151-744-7772, 362-923-5047, 989-858-6625, 918-369-8280,
+  159-692-9290 (đều đã huỷ), 124-440-6068 (đang thiết lập); login hungnguyen2511ab có 594-493-6894 (đã huỷ) + 225-186-9515 → ~9 tài khoản cùng 1 người/
+  thương hiệu. Đơn kháng nghị phải khai thật lý do tạo/huỷ các tài khoản này. KHÔNG dùng 124-440-6068 để chạy thay.
   **TUYỆT ĐỐI không tạo tài khoản Ads mới khi đang bị ngưng** (chính là "lách hệ thống" → khoá luôn tài khoản/tên miền/thẻ mới).
   Đã dựng trước khi bị ngưng (giữ nguyên, chạy lại được nếu kháng nghị thành công):
   · Chiến dịch Tìm kiếm id `24524671587` "LTT - Tìm kiếm - Nhà Lê Thị Tám 5,6 tỷ": 50.000 ₫/ngày, Tối đa hoá lượt nhấp (CPC tối đa 6.000 ₫), từ khoá cụm từ,
