@@ -147,7 +147,20 @@ CLOUDFLARE_API_TOKEN=… CLOUDFLARE_ACCOUNT_ID=… npx wrangler pages deploy dis
 - Tiêu đề video YouTube ghi "135m²", sổ ghi 138 m² → trang giữ 138 m² theo sổ; nên sửa tiêu đề video cho khớp.
 
 ## 8. Việc còn chờ
-- Google Ads 225-186-9515: Tài khoản báo **"Đã hết số dư tài khoản"** → nạp tiền mới chạy được chiến dịch. 124-440-6068 (kẹt trình hướng dẫn) và 918-369-8280 (cũ) không dùng.
+- **Google Ads 225-186-9515 BỊ TẠM NGƯNG 21/11 tối — chính sách "Lách hệ thống" (Circumventing systems)**. Xảy ra sau khi trong cùng ngày: mua tên miền
+  mới, xác minh danh tính nhà quảng cáo, nạp 300.000 ₫ (số dư 277.778 ₫), tạo chiến dịch Tìm kiếm + bản nháp Video. Nguyên nhân Google không nói rõ; nghi:
+  tên miền mới tinh chạy QC ngay, nhiều tài khoản Ads (225-186-9515, 594-493-6894 đã huỷ, 124-440-6068, 918-369-8280), chiến dịch cũ "Tạo nhu cầu 2026-09-11 #2"
+  từng bị hạn chế chính sách, tiêu đề video "GIẢM SÂU 400 TRIỆU"/giá gạch. Cách xử lý: CHỈ Giang gửi kháng nghị (banner đầu trang Ads → "Liên hệ với chúng tôi"/
+  "Khắc phục vấn đề"; có thể phải xác minh danh tính, sai 3 lần là mất quyền kháng nghị; mỗi lần 1 đơn, kết quả qua email).
+  **TUYỆT ĐỐI không tạo tài khoản Ads mới khi đang bị ngưng** (chính là "lách hệ thống" → khoá luôn tài khoản/tên miền/thẻ mới).
+  Đã dựng trước khi bị ngưng (giữ nguyên, chạy lại được nếu kháng nghị thành công):
+  · Chiến dịch Tìm kiếm id `24524671587` "LTT - Tìm kiếm - Nhà Lê Thị Tám 5,6 tỷ": 50.000 ₫/ngày, Tối đa hoá lượt nhấp (CPC tối đa 6.000 ₫), từ khoá cụm từ,
+    từ khoá phủ định, chú thích (callout), hậu tố URL cuối gắn UTM (xem trong cài đặt chiến dịch). Quảng cáo hình ảnh trong Tìm kiếm chưa đủ điều kiện (cần tài khoản
+    >60 ngày + ~28 ngày chi tiêu Tìm kiếm). Logo doanh nghiệp: `public/logo-1200.png` (1200×1200), trang `/thuong-hieu/` (noindex, og:image = logo).
+  · Bản nháp Video lượt xem (draftId `10223928862`): 100.000 ₫/ngày, HCM + Tây Ninh, chỉ YouTube, video `0un_OGG0Gd4`, URL `?utm_source=youtube&utm_medium=cpc&utm_campaign=ltt-video`,
+    dự kiến nhắm từ khoá BĐS Bình Chánh/Cần Giuộc + vị trí đặt = kênh đối thủ. Chưa tạo được (tài khoản ngưng).
+  · Các chiến dịch cũ (Tạo nhu cầu, Video 2026-02-02, The Sol City…) đều Bị tạm dừng/Đã kết thúc.
+  Mã GTM/thẻ Google Ads trên web vẫn giữ (vô hại khi tài khoản ngưng). 124-440-6068 (kẹt trình hướng dẫn) và 918-369-8280 (cũ) không dùng.
   GTM khác (tài khoản "nhaxinhminhthuy"): GTM-5FDCX8TX, GTM-52TCQ75H, GTM-MTCT4JQW — web khác, không đụng.
 - Quảng cáo TikTok/Facebook còn trỏ `nhaxinhminhthuy-bds.pages.dev` → quảng cáo mới dùng `https://nhaxinhminhthuy.com/…`; tắt hết quảng cáo cũ thì bật `CANONICAL_REDIRECT`.
 - Lượt thử cần xoá khi Giang đồng ý: lead #4 + các lượt bấm thử trong CRM.
