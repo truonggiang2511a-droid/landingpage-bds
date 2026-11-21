@@ -30,6 +30,7 @@ repo GitHub trống, code chỉ nằm trong 1 file zip ở Downloads rồi bị 
 | `functions/api/events.js` | Sale đổi trạng thái → TikTok/Facebook (Khách thật→ApplicationApproval/QualifiedLead, Hẹn xem→Schedule, Đặt cọc+tiền→Purchase) |
 | `functions/_middleware.js` | 301 pages.dev → tên miền (bật bằng `CANONICAL_REDIRECT=on`) |
 | `tools/ban-do.py` + `data/nha/<slug>.map.json` | Vẽ bản đồ vị trí (ngang 1600 + dọc 1170, kèm bản 800): nền vệ tinh Esri, ranh = relation OSM, đường đi OSRM, ô phóng to điểm ranh. Vị trí nhãn chỉnh trong `.map.json` (`pos`, `pos_v` = tỉ lệ khung) |
+| `tools/xem-thu.py` | Bản xem thử gửi Giang (artifact claude.ai): lấy `dist/<slug>` → `xem-thu/` (bỏ pixel, form demo, dải báo). Đăng lại bằng publish_files, artifact `0286d960-a184-40fd-86d4-eb5b6564c7a2` |
 | `supabase/migrations/` | Schema `nx` + các hàm `public.nx_*` |
 | `test/` | `functions.mjs` (13 ca, fetch giả), `page.mjs` (kiểm trang dựng) — `npm test` |
 
