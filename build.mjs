@@ -247,7 +247,7 @@ ${heroHtml(h)}
   <button type="button" class="nudge-x" aria-label="Đóng gợi ý">${ic('x')}</button>
   <b>Anh/chị muốn xem nhà thực tế?</b>
   <p>Gọi ngay để được dẫn xem tận nơi, hoặc đặt lịch — bên em gọi lại xác nhận trong ít phút.</p>
-  <div class="nudge-btns"><a class="btn btn-call" href="${telHref}">${ic('phone')}Gọi ngay</a><a class="btn btn-dark" href="#dat-lich" data-mode="xem">${ic('calendar')}Đặt lịch xem</a></div>
+  <div class="nudge-btns"><a class="btn btn-call" href="${telHref}">${ic('phone')}Gọi ngay</a><a class="btn nudge-zalo" href="${SITE.zalo}" target="_blank" rel="noopener">${ic('zalo')}Zalo</a><a class="btn btn-dark" href="#dat-lich" data-mode="xem">${ic('calendar')}Đặt lịch</a></div>
 </aside>
 
 <div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Xem ảnh">

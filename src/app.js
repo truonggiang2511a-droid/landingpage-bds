@@ -180,7 +180,7 @@
       settle(postApi(payload, extra)).then(function (ok) {
         if (ok) {
           try { localStorage.setItem('lp_lead_done', String(Date.now())); } catch (e) { /* bỏ qua */ }
-          var ng = $('#nudge'); if (ng) ng.hidden = true;
+          var ng = $('#nudge'); if (ng) { ng.hidden = true; upd(); }
           sha256(e164).then(function (h) {
             if (ttq()) {
               if (h && typeof ttq().identify === 'function') ttq().identify({ phone_number: h, external_id: h });
@@ -388,8 +388,13 @@
   // ================= THANH LIÊN HỆ ĐÁY =================
   var bar = $('#bar'), heroCta = $('#heroCta'), formSec = $('#dat-lich'), nudge = $('#nudge');
   var vis = { hero: true, form: false };
+  // Thẻ nhắc đang mở → ẩn thanh đáy (thẻ đã có đủ Gọi / Zalo / Đặt lịch), tránh 2 bộ nút trùng nhau. Đóng thẻ → thanh đáy hiện lại.
+  var upd = function () {
+    var nOpen = nudge && !nudge.hidden;
+    if (bar) bar.classList.toggle('hide', vis.hero || vis.form || nOpen);
+    if (nudge) nudge.classList.toggle('nobar', true);
+  };
   if (bar && 'IntersectionObserver' in window) {
-    var upd = function () { var h = vis.hero || vis.form; bar.classList.toggle('hide', h); if (nudge) nudge.classList.toggle('nobar', h); };
     new IntersectionObserver(function (es) {
       es.forEach(function (e) { if (e.target === heroCta) vis.hero = e.isIntersecting; else vis.form = e.isIntersecting; });
       upd();
@@ -408,7 +413,7 @@
     var markSeen = function () { try { sessionStorage.setItem(NKEY, '1'); } catch (e) { /* bỏ qua */ } };
     var recent = function (k, ms) { try { var v = +localStorage.getItem(k); return v && Date.now() - v < ms; } catch (e) { return false; } };
     var depth = function () { var d = document.documentElement, mx = d.scrollHeight - innerHeight; return mx > 0 ? scrollY / mx : 0; };
-    var hideNudge = function () { nudge.hidden = true; markSeen(); };
+    var hideNudge = function () { nudge.hidden = true; markSeen(); upd(); };
     var check = function () {
       if (shown) return;
       maxDepth = Math.max(maxDepth, depth());
@@ -417,12 +422,12 @@
       if (vis.form || (lbEl && !lbEl.hidden) || (act && /INPUT|TEXTAREA|SELECT/.test(act.tagName))) return;
       var engaged = maxDepth >= 0.5 || (window.__lpImgViews || 0) >= 5 || (Date.now() - t0 >= 45000 && maxDepth >= 0.25);
       if (!engaged) return;
-      shown = true; nudge.hidden = false; markSeen();
+      shown = true; nudge.hidden = false; markSeen(); upd();
     };
     addEventListener('scroll', check, { passive: true });
     setInterval(check, 3000);
     $('.nudge-x', nudge).addEventListener('click', hideNudge);
-    $$('a', nudge).forEach(function (a) { a.addEventListener('click', function () { nudge.hidden = true; }); });
+    $$('a', nudge).forEach(function (a) { a.addEventListener('click', function () { nudge.hidden = true; upd(); }); });
     var ty = null;
     nudge.addEventListener('touchstart', function (e) { ty = e.touches[0].clientY; }, { passive: true });
     nudge.addEventListener('touchmove', function (e) { if (ty !== null && e.touches[0].clientY - ty > 40) { ty = null; hideNudge(); } }, { passive: true });

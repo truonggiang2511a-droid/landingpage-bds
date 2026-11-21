@@ -74,6 +74,7 @@ CLOUDFLARE_API_TOKEN=… CLOUDFLARE_ACCOUNT_ID=… npx wrangler pages deploy dis
 - Supabase gói miễn phí: dự án tự dừng sau 7 ngày không hoạt động; chỉ 2 dự án chạy cùng lúc (tính mọi tổ chức mình là Owner/Admin).
 - Trạm Y tế Hưng Long: bản cũ ghi "khoảng 300 m", đo thật 561 m → sửa "560 m". Sổ: 31,5 m² thuộc chỉ giới đường đỏ — đã ghi rõ ở Pháp lý + Hỏi đáp.
 - Khung gợi ý góc phải (`#nudge`): mỗi lượt vào trang (sessionStorage `lp_nudge_s`) hiện tối đa 1 lần khi khách đã xem kỹ; không hiện nếu đã bấm Gọi/Zalo (24h) hoặc đã gửi form (30 ngày). Giang chọn 21/11 (trước đây 3 ngày/lần). Không hiện ngay khi vào trang (khung che nội dung bị nền tảng đánh giá kém).
+  Thẻ mở → thanh đáy `#bar` ẩn (thẻ có đủ Gọi / Zalo / Đặt lịch), đóng thẻ → thanh hiện lại — không để 2 bộ nút trùng nhau (Giang báo 21/11).
 - Tiêu đề video YouTube ghi "135m²", sổ ghi 138 m² → trang giữ 138 m² theo sổ; nên sửa tiêu đề video cho khớp.
 
 ## 8. Việc còn chờ

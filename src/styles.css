@@ -470,3 +470,10 @@ body.lock{overflow:hidden}
   .hero-cta .btn-primary::after,#leadBtn::after,.bar-main::after,.price-card .btn-primary::after,.btn-call::before,.top-call::before{display:none}
   .rv-on .rv{opacity:1;transform:none;transition:none}
 }
+
+/* Thẻ nhắc thay chỗ thanh đáy khi mở (21/11): 3 nút như thanh đáy, không trùng 2 bộ nút */
+.nudge,.nudge.nobar{bottom:calc(12px + env(safe-area-inset-bottom))}
+.nudge-btns{grid-template-columns:1.25fr .75fr 1.25fr}
+.nudge-btns .btn{gap:6px;font-size:15px}
+.nudge-zalo{background:#EAF2FF;color:#0068FF;font-weight:700}
+.nudge-zalo .ic{color:#0068FF}
