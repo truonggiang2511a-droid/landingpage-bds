@@ -1,0 +1,9 @@
+{
+  "name": "landingpage-bds",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node build.mjs && node test/functions.mjs && node test/page.mjs"
+  }
+}

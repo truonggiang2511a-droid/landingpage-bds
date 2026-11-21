@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#14532D">
+<title>CRM khách nhà đất · Nhà Xinh Minh Thùy</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2040%2040%22%3E%3Crect%20width%3D%2240%22%20height%3D%2240%22%20rx%3D%2211%22%20fill%3D%22%2314532D%22%2F%3E%3Cpath%20d%3D%22M8%2030V17l6.5-6%205.5%205%205.5-5%206.5%206v13%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%223.2%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M14.5%2030v-9.5L20%2025.5l5.5-5V30%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%223.2%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
+<link rel="stylesheet" href="../styles.css?v=__V__">
+<link rel="stylesheet" href="crm.css?v=__V__">
+<script>window.CRM_CFG = __CRM_CONFIG__;</script>
+<script type="module" src="crm.js?v=__V__"></script>
+</head>
+<body class="crm">
+<header class="top"><div class="wrap top-in">
+  <a class="brand" href="#"><svg class="logo" width="36" height="36" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="11" fill="#14532D"/><path d="M8 30V17l6.5-6 5.5 5 5.5-5 6.5 6v13" fill="none" stroke="#fff" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><path d="M14.5 30v-9.5L20 25.5l5.5-5V30" fill="none" stroke="#fff" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/></svg><span class="brand-t"><b>MINH THÙY</b><small>CRM · Nhà Xinh</small></span></a>
+  <div class="top-r" id="who" hidden><span class="mut" id="whoName"></span><button class="chip-btn" id="logoutBtn">Đăng xuất</button></div>
+</div></header>
+
+<main>
+  <!-- Đăng nhập: 1 mật khẩu CRM chung cho sale (Giang giữ, đổi được) -->
+  <section id="authView" class="wrap auth" hidden>
+    <h1>Đăng nhập CRM</h1>
+    <p class="mut">Nhập mật khẩu CRM Nhà Xinh Minh Thùy. Máy này sẽ nhớ để lần sau vào thẳng.</p>
+    <form id="authForm" class="card">
+      <label class="fld"><span>Tên của bạn (hiện trong ghi chú)</span><input name="who" autocomplete="name" placeholder="Ví dụ: Thùy" maxlength="40"></label>
+      <label class="fld"><span>Mật khẩu CRM</span><input name="password" type="password" autocomplete="current-password" required></label>
+      <button class="btn btn-primary btn-block" type="submit">Vào CRM</button>
+      <p class="msg" id="authMsg"></p>
+    </form>
+  </section>
+
+  <!-- Danh sách khách + Báo cáo -->
+  <section id="appView" hidden>
+    <div class="wrap">
+      <div class="vtabs" role="tablist">
+        <button role="tab" data-tab="list" class="on" aria-selected="true">Khách</button>
+        <button role="tab" data-tab="report" aria-selected="false">Chất lượng &amp; nguồn</button>
+        <button role="tab" data-tab="links" aria-selected="false">Link</button>
+      </div>
+      <div id="listView">
+        <div class="stats" id="stats"></div>
+        <div class="filters">
+          <input id="q" type="search" placeholder="Tìm tên, SĐT…" inputmode="search">
+          <select id="srcSel" aria-label="Lọc theo nguồn"><option value="">Tất cả nguồn</option></select>
+          <select id="houseSel" aria-label="Lọc theo căn"><option value="">Tất cả căn</option></select>
+        </div>
+        <div class="chips" id="statusChips"></div>
+        <button class="add-call" id="addCallBtn" type="button">＋ Khách gọi tới</button>
+        <ul class="leads" id="list"></ul>
+        <p class="empty" id="empty" hidden>Chưa có khách nào ở mục này.</p>
+        <button class="btn btn-line btn-block" id="moreLeads" hidden>Xem thêm</button>
+      </div>
+      <div id="linksView" hidden><div id="links"></div></div>
+      <div id="reportView" hidden>
+        <div class="chips" id="rangeChips"></div>
+        <div id="report"><p class="empty">Đang tải…</p></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Chi tiết khách -->
+<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true">
+  <div class="sheet-in">
+    <div class="sheet-top"><button class="icon-btn" id="closeSheet" aria-label="Đóng">✕</button><span id="sheetId"></span></div>
+    <div id="detail"></div>
+  </div>
+</div>
+
+<!-- Thêm khách gọi tới (khách gọi thẳng, không điền form) -->
+<div class="sheet" id="addSheet" hidden role="dialog" aria-modal="true">
+  <div class="sheet-in">
+    <div class="sheet-top"><button class="icon-btn" data-close="addSheet" aria-label="Đóng">✕</button><b>Thêm khách gọi tới</b></div>
+    <form id="addForm" class="card">
+      <p class="mut">Khách gọi thẳng số tư vấn, không điền form trên web. Thêm vào để khách có trong báo cáo chất lượng và gửi được cho quảng cáo.</p>
+      <label class="fld"><span>Số điện thoại khách *</span><input name="phone" type="tel" inputmode="tel" autocomplete="off" required placeholder="09xx xxx xxx"></label>
+      <label class="fld"><span>Tên / cách xưng hô</span><input name="name" autocomplete="off" placeholder="Anh Minh"></label>
+      <label class="fld"><span>Khách biết căn nhà từ đâu? *</span><select name="src" required>
+        <option value="">— Hỏi khách rồi chọn —</option>
+        <option value="facebook|paid">Quảng cáo Facebook</option>
+        <option value="tiktok|paid">Quảng cáo TikTok</option>
+        <option value="google|paid">Quảng cáo Google</option>
+        <option value="youtube|paid">Quảng cáo YouTube</option>
+        <option value="zalo|">Zalo</option>
+        <option value="youtube|">Video YouTube của kênh (không phải quảng cáo)</option>
+        <option value="gioi-thieu|">Giới thiệu / khách cũ</option>
+        <option value="bien-ban|">Biển bán nhà / đi ngang</option>
+        <option value="khac|">Khác / không nhớ</option>
+      </select></label>
+      <label class="fld"><span>Căn nhà</span><select name="house" id="addHouse"></select></label>
+      <label class="fld"><span>Tình trạng sau cuộc gọi</span><select name="status">
+        <option>Đã gọi</option><option>Khách thật</option><option>Hẹn xem nhà</option><option>Không liên lạc được</option><option>Sai số / Rác</option>
+      </select></label>
+      <label class="fld"><span>Ghi chú</span><textarea name="note" rows="2" placeholder="Cần vay 70%, muốn xem cuối tuần…"></textarea></label>
+      <button class="btn btn-primary btn-block" type="submit">Lưu khách</button>
+      <p class="msg" id="addMsg"></p>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+</body>
+</html>
