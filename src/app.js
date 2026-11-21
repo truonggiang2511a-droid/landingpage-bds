@@ -400,23 +400,24 @@
   }
 
   // ================= THẺ NHẮC (thay popup) =================
-  // Chỉ hiện 1 lần / 3 ngày, khi khách ĐÃ XEM KỸ (lướt quá nửa trang, xem ≥ 5 ảnh, hoặc ở lại ≥ 45 giây và đã lướt ≥ 25%).
+  // Mỗi lượt vào trang hiện tối đa 1 lần (sessionStorage — khách quay lại từ quảng cáo nhắc lại vẫn được mời), khi khách ĐÃ XEM KỸ (lướt quá nửa trang, xem ≥ 5 ảnh, hoặc ở lại ≥ 45 giây và đã lướt ≥ 25%).
   // Không hiện nếu khách đã để lại số / đã bấm gọi-Zalo, đang xem ảnh lớn, đang ở form hoặc đang gõ.
   if (nudge) {
-    var NKEY = 'lp_nudge', t0 = Date.now(), maxDepth = 0, shown = false;
+    var NKEY = 'lp_nudge_s', t0 = Date.now(), maxDepth = 0, shown = false;
+    var seenThisVisit = function () { try { return !!sessionStorage.getItem(NKEY); } catch (e) { return false; } };
+    var markSeen = function () { try { sessionStorage.setItem(NKEY, '1'); } catch (e) { /* bỏ qua */ } };
     var recent = function (k, ms) { try { var v = +localStorage.getItem(k); return v && Date.now() - v < ms; } catch (e) { return false; } };
     var depth = function () { var d = document.documentElement, mx = d.scrollHeight - innerHeight; return mx > 0 ? scrollY / mx : 0; };
-    var hideNudge = function () { nudge.hidden = true; try { localStorage.setItem(NKEY, String(Date.now())); } catch (e) { /* bỏ qua */ } };
+    var hideNudge = function () { nudge.hidden = true; markSeen(); };
     var check = function () {
       if (shown) return;
       maxDepth = Math.max(maxDepth, depth());
-      if (recent(NKEY, 3 * 864e5) || recent('lp_lead_done', 30 * 864e5) || recent('lp_contacted', 864e5)) return;
+      if (seenThisVisit() || recent('lp_lead_done', 30 * 864e5) || recent('lp_contacted', 864e5)) return;
       var lbEl = $('#lb'), act = document.activeElement;
       if (vis.form || (lbEl && !lbEl.hidden) || (act && /INPUT|TEXTAREA|SELECT/.test(act.tagName))) return;
       var engaged = maxDepth >= 0.5 || (window.__lpImgViews || 0) >= 5 || (Date.now() - t0 >= 45000 && maxDepth >= 0.25);
       if (!engaged) return;
-      shown = true; nudge.hidden = false;
-      try { localStorage.setItem(NKEY, String(Date.now())); } catch (e) { /* bỏ qua */ }
+      shown = true; nudge.hidden = false; markSeen();
     };
     addEventListener('scroll', check, { passive: true });
     setInterval(check, 3000);
