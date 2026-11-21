@@ -33,7 +33,7 @@ repo GitHub trống, code chỉ nằm trong 1 file zip ở Downloads rồi bị 
 | `tools/ban-do.py` + `data/nha/<slug>.map.json` | Vẽ bản đồ vị trí (ngang 1600 + dọc 1170, kèm bản 800): nền vệ tinh Esri, ranh = relation OSM, đường đi OSRM, ô phóng to điểm ranh. Vị trí nhãn chỉnh trong `.map.json` (`pos`, `pos_v` = tỉ lệ khung) |
 | `tools/xem-thu.py` | Bản xem thử gửi Giang (artifact claude.ai): lấy `dist/<slug>` → `xem-thu/` (bỏ pixel, form demo, dải báo). Đăng lại bằng publish_files, artifact `0286d960-a184-40fd-86d4-eb5b6564c7a2` |
 | `supabase/migrations/` | Schema `nx` + các hàm `public.nx_*` |
-| `test/` | `functions.mjs` (13 ca, fetch giả), `page.mjs` (kiểm trang dựng) — `npm test` |
+| `test/` | `functions.mjs` (16 ca, fetch giả), `page.mjs` (kiểm trang dựng) — `npm test` |
 
 ## 3. Đo chuyển đổi — KHÔNG đếm trùng
 - TikTok pixel `DBKSTGRC77UFMFQA75Q0`, Meta pixel `1561410692372628`: gắn thẳng trong trang (tải sau `load`) + gửi từ máy chủ, cùng `event_id`.
@@ -47,11 +47,20 @@ repo GitHub trống, code chỉ nằm trong 1 file zip ở Downloads rồi bị 
 - Bảng `nx.leads`, `nx.clicks`, `nx.notes`, `nx.config` — schema `nx` không mở qua Data API, anon/authenticated không có quyền bảng.
 - Trình duyệt/máy chủ chỉ gọi hàm `public.nx_*` (SECURITY DEFINER, tự kiểm khoá):
   `nx_ingest_lead|click|log(p_secret…)` khoá máy chủ = secret `CRM_INGEST_SECRET` (so sha256 với `nx.config.ingest_sha256`);
-  `nx_crm_check|leads|lead|update|add_lead|notes|add_note|log_event|report(p_pass…)` = mật khẩu CRM (bcrypt `nx.config.crm_pass_bcrypt`).
+  `nx_crm_check|leads|lead|update|add_lead|notes|add_note|log_event|report|clicks|link_click(p_pass…)` = mật khẩu CRM (bcrypt `nx.config.crm_pass_bcrypt`).
 - Advisor Supabase báo "anon gọi được SECURITY DEFINER" cho các hàm `nx_*` — **cố ý** (hàm tự kiểm khoá). Không thu quyền.
 - Đổi mật khẩu CRM: tạo bcrypt `$2a$` (python `bcrypt.hashpw(pw, bcrypt.gensalt(prefix=b'2a'))`) → `update nx.config set value=… where key='crm_pass_bcrypt'`.
   KHÔNG đưa mật khẩu gốc vào migration (bảng migrations lưu nguyên văn).
 - Không dùng Supabase Auth (để không tạo người dùng trong app marketing). Không realtime → CRM hỏi lại mỗi 30 giây.
+- **Tín hiệu ngược về nền tảng** (đã có từ đầu, 21/11 làm kỹ thêm): sale đổi trạng thái → `/api/events` tự gửi (không cần bấm thêm):
+  Khách thật → TikTok `ApplicationApproval` / Facebook `QualifiedLead`; Hẹn xem nhà → `Schedule`; Đặt cọc + nhập tiền → `Purchase` (value = tiền cọc, VND).
+  Mỗi bước gửi 1 lần (kiểm `tiktok_log`), `event_id` = `<event_id lead hoặc crm<id>>_<tên sự kiện>`. Kèm mã nhận diện lưu từ lúc khách vào trang:
+  SĐT băm, `external_id` = sha256("nx:" + SĐT +84) giống nhau ở mọi bước/2 nền tảng, ttclid, _ttp, fbclid/_fbc (fbc dựng theo GIỜ KHÁCH BẤM), _fbp, IP, trình duyệt.
+- **Khách gọi/Zalo thẳng** (không điền form) trước đây chỉ có SĐT → nền tảng khó khớp. Migration `20261121b_nx_click_link.sql`: `nx.clicks` lưu thêm
+  _ttp/_fbp/_fbc + `lead_id`; CRM có khung vàng "Khớp khách với quảng cáo" ở khách chưa có mã → sale chọn lượt bấm Gọi/Zalo trùng giờ (72 giờ gần nhất,
+  hiện nguồn/chiến dịch/thiết bị) → `nx_crm_link_click` chép mã sang khách (chỉ điền ô trống) → các bước sau gửi kèm mã. Gắn sai = gán nhầm người: chọn đúng giờ.
+- Lượng khách BĐS ít (vài chục/tuần) → nền tảng chưa đủ dữ liệu để tối ưu thẳng vào QualifiedLead/Purchase (cần ~50 sự kiện/tuần/nhóm QC):
+  tối ưu theo Lead/SubmitForm, dùng các bước sau để xem quảng cáo nào ra khách thật + làm tệp tương tự (Lookalike cần ≥100 người).
 - Chuyển CRM ra dự án riêng: chạy lại migration ở dự án mới + chép dữ liệu `nx.*` + đổi `data/site.json → crm` + hash khoá.
 
 ## 5. Thêm 1 căn mới

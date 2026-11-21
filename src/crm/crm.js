@@ -288,6 +288,9 @@ async function renderDetail(l) {
   $('#detail').innerHTML = `
   <div class="d-head"><h2>${esc(l.name || 'Khách chưa để tên')}</h2><div class="ph">${esc(l.phone)}</div>${l.duplicate_of ? `<a class="pill s-hen" href="#lead-${l.duplicate_of}">SĐT đã để lại trước đó (#${l.duplicate_of})</a>` : ''}</div>
   <div class="d-cta"><a class="btn btn-primary" href="tel:${digits(l.phone)}" id="callBtn">Gọi ngay</a><a class="btn btn-line" href="https://zalo.me/${digits(l.phone)}" target="_blank" rel="noopener">Nhắn Zalo</a></div>
+  ${hasAdIds(l) ? '' : `<div class="blk link-blk" id="linkBlk"><h3>Khớp khách với quảng cáo</h3>
+    <p class="hint">Khách gọi / nhắn Zalo thẳng nên TikTok, Facebook chưa biết là ai. Chọn <b>lượt bấm trùng giờ khách liên hệ</b> → các bước sau (Khách thật, Hẹn xem, Đặt cọc) gửi về đúng quảng cáo đã đưa khách tới.</p>
+    <ul class="clicks" id="clickList"><li><small>Đang tải lượt bấm…</small></li></ul></div>`}
   <div class="blk"><h3>Trạng thái</h3><div class="st-grid">${STATUSES.map((s) => `<button data-st="${esc(s)}" class="${s === l.status ? 'on' : ''}">${esc(s)}</button>`).join('')}</div>
     <div id="depositBox" ${l.status === 'Đặt cọc' ? '' : 'hidden'} style="margin-top:10px"><label class="fld"><span>Số tiền cọc (VNĐ) — gửi TikTok + Facebook làm giá trị chuyển đổi</span><input id="deposit" inputmode="numeric" value="${l.deposit_value || ''}" placeholder="Ví dụ 200000000"></label></div>
     ${l.tiktok_log ? `<div class="tlog"><b>Đã gửi quảng cáo</b>\n${esc(l.tiktok_log.trim())}</div>` : ''}</div>
@@ -306,8 +309,35 @@ async function renderDetail(l) {
     <textarea id="noteText" rows="3" placeholder="Ví dụ: khách cần vay 70%, hẹn chở vợ đi xem thứ 7…"></textarea>
     <div class="quick"><button id="addNote" style="background:var(--g8);color:#fff">Lưu ghi chú</button><button data-quick="Đã gọi, không nghe máy">Không nghe máy</button><button data-quick="Đã gửi thêm ảnh/video qua Zalo">Đã gửi Zalo</button></div>
     <ul class="notes" id="notes"><li><small>Đang tải…</small></li></ul></div>`;
+  if (!hasAdIds(l)) loadClicks();
   const { data: notes } = await rpc('nx_crm_notes', { p_lead: l.id });
   $('#notes').innerHTML = (notes || []).map((n) => `<li class="${n.kind}">${esc(n.body)}<small>${esc(n.author_name || '')} · ${esc(ago(n.created_at))}</small></li>`).join('') || '<li><small>Chưa có ghi chú.</small></li>';
+}
+// Khách đã có mã nhận diện quảng cáo (form trên trang, hoặc đã gắn lượt bấm)
+const hasAdIds = (l) => !!(l.click_id || l.ttclid || l.ttp || l.fbclid || l.fbp || l.fbc || l.gclid || l.gbraid || l.wbraid);
+function device(ua = '') {
+  const app = /musical_ly|BytedanceWebview|TikTok/i.test(ua) ? ' · trong TikTok' : /FBAN|FBAV|FB_IAB|Instagram/i.test(ua) ? ' · trong Facebook' : /Zalo/i.test(ua) ? ' · trong Zalo' : '';
+  const d = /iPhone|iPad/i.test(ua) ? 'iPhone' : /Android/i.test(ua) ? 'Android' : ua ? 'Máy tính' : '';
+  return d + app;
+}
+async function loadClicks() {
+  const box = $('#clickList'); if (!box) return;
+  const { data, error } = await rpc('nx_crm_clicks', { p_hours: 72 });
+  if (error) { box.innerHTML = `<li><small>Lỗi: ${esc(error.message)}</small></li>`; return; }
+  const rows = data || [];
+  box.innerHTML = rows.length ? rows.slice(0, 30).map((c) => `<li><div><b>${esc(fmtDT(new Date(c.created_at)))}</b> · ${c.kind === 'zalo' ? 'Bấm Zalo' : 'Bấm Gọi'}
+      <small>${esc(sourceLabel(c))}${c.utm_campaign ? ' · ' + esc(c.utm_campaign) : ''}${device(c.user_agent) ? ' · ' + esc(device(c.user_agent)) : ''}${c.has_tt ? ' · mã TikTok ✓' : ''}${c.has_fb ? ' · mã Facebook ✓' : ''}</small></div>
+      <button data-link="${c.id}">Gắn</button></li>`).join('')
+    : '<li><small>Không có lượt bấm Gọi/Zalo nào trong 3 ngày qua chưa gắn khách.</small></li>';
+}
+async function linkClick(id, clickId) {
+  const { data, error } = await rpc('nx_crm_link_click', { p_lead: id, p_click: Number(clickId) });
+  if (error) return toast('Lỗi: ' + error.message, 4000);
+  const i = S.leads.findIndex((x) => x.id === id); if (i >= 0) S.leads[i] = data;
+  toast('Đã khớp khách với lượt bấm — TikTok/Facebook sẽ nhận ra khách này');
+  addNote(id, 'Đã khớp với lượt bấm Gọi/Zalo trên trang', 'note');
+  render(); renderDetail(data);
+  if (ADS[data.status]) sendAds(id); // trạng thái hiện tại chưa gửi được thì gửi luôn, kèm mã vừa khớp
 }
 async function updateLead(id, patch, okMsg) {
   const { data, error } = await rpc('nx_crm_update', { p_id: id, p_patch: patch });
@@ -337,6 +367,8 @@ $('#detail').addEventListener('click', async (e) => {
     if (l && ADS[status]) sendAds(id);
     return;
   }
+  const lk = e.target.closest('[data-link]');
+  if (lk) { lk.disabled = true; await linkClick(id, lk.dataset.link); return; }
   const fu = e.target.closest('[data-fu]');
   if (fu) {
     const d = new Date(), k = fu.dataset.fu; let v = null;

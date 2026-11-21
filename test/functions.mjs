@@ -111,5 +111,25 @@ await t('events: Đặt cọc chưa nhập tiền → chờ, có tiền → Purc
   assert.equal(tt.event, 'Purchase'); assert.equal(tt.properties.value, 200000000); assert.equal(tt.properties.currency, 'VND');
 });
 
+await t('events: khách gọi/Zalo đã khớp lượt bấm → gửi kèm ttclid/_ttp/_fbp/_fbc + external_id; fbc theo giờ khách bấm', async () => {
+  const lead = { id: 9, status: 'Khách thật', event_id: '', phone_e164: '+84912345678', tiktok_log: '', created_at: '2026-11-20T03:00:00Z',
+    click_id: 5, ttclid: 'TT1', ttp: 'TTP1', fbp: 'fb.1.1.2', fbclid: 'FBC1', client_ip: '1.2.3.4', user_agent: 'UA' };
+  const f = mockFetch([[/nx_crm_lead/, lead], [/nx_crm_log_event/, {}], [/business-api\.tiktok\.com/, { code: 0 }], [/graph\.facebook\.com/, { events_received: 1 }]]);
+  await handleEvents(req({ id: 9 }, { 'x-crm-pass': 'p' }), ENV, f);
+  const tt = f.calls.find((c) => /tiktok/.test(c.url)).body.data[0];
+  const fb = f.calls.find((c) => /facebook/.test(c.url)).body.data[0];
+  assert.equal(tt.event, 'ApplicationApproval'); assert.equal(tt.event_id, 'crm9_ApplicationApproval');
+  assert.equal(tt.user.ttclid, 'TT1'); assert.equal(tt.user.ttp, 'TTP1'); assert.match(tt.user.external_id, /^[a-f0-9]{64}$/);
+  assert.equal(fb.event_name, 'QualifiedLead'); assert.equal(fb.user_data.fbp, 'fb.1.1.2');
+  assert.equal(fb.user_data.fbc, `fb.1.${Date.parse('2026-11-20T03:00:00Z')}.FBC1`);
+  assert.equal(fb.user_data.external_id[0], tt.user.external_id); // cùng 1 khách → cùng external_id ở 2 nền tảng
+});
+await t('contact: lưu cả _ttp/_fbp/_fbc của lượt bấm (để khớp khách gọi/Zalo sau này)', async () => {
+  const f = mockFetch(okRoutes());
+  await handleContact(req({ event_id: 'zalo_1', kind: 'zalo', ttp: 'TTP', fbp: 'FBP', fbc: 'FBC' }), ENV, f);
+  const c = f.calls.find((x) => /nx_ingest_click/.test(x.url)).body.p;
+  assert.equal(c.ttp, 'TTP'); assert.equal(c.fbp, 'FBP'); assert.equal(c.fbc, 'FBC'); assert.equal(c.client_ip, '1.2.3.4');
+});
+
 console.log(`\n${pass} đạt, ${fail} lỗi`);
 if (fail) process.exit(1);

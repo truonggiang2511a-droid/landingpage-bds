@@ -19,12 +19,13 @@ export const fbcFrom = (fbclid, ms = Date.now()) => (fbclid ? `fb.1.${ms}.${fbcl
 export async function sendTikTok(env, { event, eventId, lead, value = 0, fetcher = fetch }) {
   if (!env.TIKTOK_ACCESS_TOKEN || !env.TIKTOK_PIXEL_ID) return { ok: false, skipped: true, line: '– TikTok chưa cài mã' };
   const phone = lead.phone_e164 ? await sha256(lead.phone_e164) : '';
+  const extId = lead.phone_e164 ? await sha256('nx:' + lead.phone_e164) : '';
   const body = {
     event_source: 'web', event_source_id: env.TIKTOK_PIXEL_ID,
     ...(env.TIKTOK_TEST_EVENT_CODE ? { test_event_code: env.TIKTOK_TEST_EVENT_CODE } : {}),
     data: [{
       event, event_time: Math.floor(Date.now() / 1000), event_id: eventId,
-      user: { ...(phone ? { phone } : {}), ...(lead.ttclid ? { ttclid: lead.ttclid } : {}), ...(lead.ttp ? { ttp: lead.ttp } : {}),
+      user: { ...(phone ? { phone } : {}), ...(extId ? { external_id: extId } : {}), ...(lead.ttclid ? { ttclid: lead.ttclid } : {}), ...(lead.ttp ? { ttp: lead.ttp } : {}),
         ...(lead.client_ip ? { ip: lead.client_ip } : {}), ...(lead.user_agent ? { user_agent: lead.user_agent } : {}) },
       page: { url: lead.page_url || '', ...(lead.referrer ? { referrer: lead.referrer } : {}) },
       properties: { content_type: 'product', contents: [{ content_id: String(lead.property_id || ''), content_name: String(lead.property_name || '') }],
@@ -43,13 +44,16 @@ export async function sendMeta(env, { event, eventId, lead, value = 0, fetcher =
   if (!env.META_ACCESS_TOKEN || !env.META_PIXEL_ID) return { ok: false, skipped: true, line: '– Facebook chưa cài mã' };
   const digits = (lead.phone_e164 || '').replace(/\D/g, ''); // Meta: chỉ chữ số, có mã nước 84…
   const ph = digits ? await sha256(digits) : '';
+  const extId = lead.phone_e164 ? await sha256('nx:' + lead.phone_e164) : '';
+  // fbc dựng từ fbclid phải mang thời điểm khách bấm (lúc tạo khách), không phải lúc sale đổi trạng thái
+  const clickMs = lead.created_at ? Date.parse(lead.created_at) || Date.now() : Date.now();
   const body = {
     data: [{
       event_name: event, event_time: Math.floor(Date.now() / 1000), event_id: eventId, action_source: 'website',
       event_source_url: lead.page_url || undefined,
-      user_data: { ...(ph ? { ph: [ph] } : {}), ...(lead.client_ip ? { client_ip_address: lead.client_ip } : {}),
+      user_data: { ...(ph ? { ph: [ph] } : {}), ...(extId ? { external_id: [extId] } : {}), ...(lead.client_ip ? { client_ip_address: lead.client_ip } : {}),
         ...(lead.user_agent ? { client_user_agent: lead.user_agent } : {}), ...(lead.fbp ? { fbp: lead.fbp } : {}),
-        ...((lead.fbc || lead.fbclid) ? { fbc: lead.fbc || fbcFrom(lead.fbclid) } : {}) },
+        ...((lead.fbc || lead.fbclid) ? { fbc: lead.fbc || fbcFrom(lead.fbclid, clickMs) } : {}) },
       custom_data: { content_name: lead.property_name || '', content_ids: [String(lead.property_id || '')], content_type: 'product',
         ...(value > 0 ? { value, currency: 'VND' } : {}) },
     }],
