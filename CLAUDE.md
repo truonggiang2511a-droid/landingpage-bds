@@ -52,7 +52,11 @@ repo GitHub trống, code chỉ nằm trong 1 file zip ở Downloads rồi bị 
   `{{DLV - event_id}}`; thẻ "Google Ads AW-17918172769" (loại Google Ads — GTM tự thêm, thay thẻ Google) chạy Initialization. Biến `DLV - event_id`, `DLV - user_data`.
   Đã TẠM DỪNG mọi thẻ tài khoản cũ AW-17767188385 (Lượt Click Zalo, Lượt xem trang, Thẻ Google cũ, và thẻ tên "Trình liên kết chuyển đổi" — thực ra là
   thẻ CHUYỂN ĐỔI chạy All Pages, đừng bật lại). Đã thử trên preview: `/pagead/conversion/17918172769/` đúng nhãn + `oid` = event_id (2 lượt thử
-  `test_gtm_2111_*` có thể hiện trong Ads). gtm.js cache trình duyệt 15 phút → sau khi xuất bản, chờ ~15 phút mới thấy bản mới ở máy đã vào trang.
+  `test_gtm_2111_*` có thể hiện trong Ads).
+- **Lượt chuyển đổi nâng cao** BẬT 21/11 (Giang đồng ý điều khoản dữ liệu khách hàng; Ads → Cài đặt chuyển đổi → "Được quản lý thông qua GTM").
+  GTM v7: thẻ "Điền Form thành công." có Tham số sự kiện `user_data` = biến "UPD - SDT bam (Gui form)" (Dữ liệu do người dùng cung cấp → Manual →
+  Điện thoại = `{{DLV - sha256_phone}}` = DL `user_data.sha256_phone_number`). Đã thử: request gửi `em=tv.1~pn.<sha256 hex>` nguyên mã băm (không băm lại),
+  `ec_mode=m` (lượt thử `test_ec_2111`). Thẻ "Bấm Gọi/Zalo" không có SĐT (khách chưa để lại số). gtm.js cache trình duyệt 15 phút → sau khi xuất bản, chờ ~15 phút mới thấy bản mới ở máy đã vào trang.
 - Video YouTube đầu trang **tự chạy tắt tiếng** (Giang chọn 21/11 — trước đó bấm ▶ thì màn đen 2–3 s, khách dễ thoát). HTML vẫn chỉ có ảnh bìa (LCP, test kiểm);
   `app.js` chèn iframe `youtube-nocookie` (`autoplay=1&mute=1&loop=1&enablejsapi=1`) SAU sự kiện `load`, nằm DƯỚI ảnh bìa; YouTube báo `playerState 1`
   (postMessage `listening`) mới đặt `data-on="auto"` → ảnh mờ dần, hiện nút "🔊 Bật tiếng" (postMessage `unMute` + `setVolume 100`, đẩy `video_play`
@@ -143,9 +147,7 @@ CLOUDFLARE_API_TOKEN=… CLOUDFLARE_ACCOUNT_ID=… npx wrangler pages deploy dis
 - Tiêu đề video YouTube ghi "135m²", sổ ghi 138 m² → trang giữ 138 m² theo sổ; nên sửa tiêu đề video cho khớp.
 
 ## 8. Việc còn chờ
-- Google Ads 225-186-9515: **Lượt chuyển đổi nâng cao** (enhanced conversions) chưa bật — cần Giang đồng ý điều khoản dữ liệu khách hàng của Google
-  (ô "Đồng ý và hoàn tất" ở trang chuyển đổi). Bật xong: thêm dữ liệu do người dùng cung cấp (SĐT băm `user_data.sha256_phone_number`) vào thẻ "Gửi form".
-  Tài khoản báo **"Đã hết số dư tài khoản"** → nạp tiền mới chạy được chiến dịch. 124-440-6068 (kẹt trình hướng dẫn) và 918-369-8280 (cũ) không dùng.
+- Google Ads 225-186-9515: Tài khoản báo **"Đã hết số dư tài khoản"** → nạp tiền mới chạy được chiến dịch. 124-440-6068 (kẹt trình hướng dẫn) và 918-369-8280 (cũ) không dùng.
   GTM khác (tài khoản "nhaxinhminhthuy"): GTM-5FDCX8TX, GTM-52TCQ75H, GTM-MTCT4JQW — web khác, không đụng.
 - Quảng cáo TikTok/Facebook còn trỏ `nhaxinhminhthuy-bds.pages.dev` → quảng cáo mới dùng `https://nhaxinhminhthuy.com/…`; tắt hết quảng cáo cũ thì bật `CANONICAL_REDIRECT`.
 - Lượt thử cần xoá khi Giang đồng ý: lead #4 + các lượt bấm thử trong CRM.
