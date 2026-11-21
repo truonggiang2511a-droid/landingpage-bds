@@ -155,7 +155,7 @@ CLOUDFLARE_API_TOKEN=… CLOUDFLARE_ACCOUNT_ID=… npx wrangler pages deploy dis
   Đã kiểm 21/11: trang trả về Y HỆT cho người dùng và AdsBot-Google/Googlebot (200, cùng nội dung), www chỉ 301 về chính trang đó, robots không chặn AdsBot
   → không phải che giấu (cloaking). Quảng cáo LTT còn "đang xem xét", chưa bị từ chối. Không loại trừ: phiên tự động hoá trình duyệt dồn dập trong Ads
   (nhiều thao tác liên tiếp, thử tải logo lỗi, Google bật "Xác nhận danh tính" giữa chừng) → sau này thao tác Google Ads để Giang tự bấm, Claude chỉ hướng dẫn/đọc số. Lúc đó Giang còn mở Ads ở Chrome riêng sửa CÙNG LÚC với trình duyệt
-  trong app (2 phiên, 2 bộ cookie, cùng 1 bản nháp → từ khoá/quảng cáo bị mất phải nhập lại) → mỗi lúc chỉ 1 người, 1 trình duyệt thao tác Ads.
+  trong app (2 phiên, 2 bộ cookie, cùng 1 bản nháp — có thể là lý do từ khoá/quảng cáo từng bị mất phải nhập lại) → mỗi lúc chỉ 1 người, 1 trình duyệt thao tác Ads.
   Đơn kháng nghị (form "Account Suspension Appeal Form", 3 bước: Account details → Circumventing systems → Confirmation) 21/11 20:20 CHƯA gửi
   (Ads → Chính sách → Account issues vẫn hiện "Start").
   Nghi nặng nhất = **nhiều tài khoản**: login truonggiang2511a có 861-159-6462 (đã đóng), 151-744-7772, 362-923-5047, 989-858-6625, 918-369-8280,
