@@ -71,6 +71,7 @@ ${noindex ? '<meta name="robots" content="noindex">\n' : ''}<link rel="icon" hre
 ${image ? `<meta property="og:image" content="${image}">\n` : ''}<meta property="og:url" content="${url}">
 <link rel="preload" href="${rel}fonts/geist-vietnamese-700-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="${rel}fonts/geist-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<script>document.documentElement.classList.add('rv-on');setTimeout(function(){if(!window.__rv)document.documentElement.classList.remove('rv-on')},2500)</script>
 ${extra}<link rel="stylesheet" href="${rel}styles.css?v=${V}">
 ${trackingHead()}</head>`;
 }
@@ -89,6 +90,7 @@ function img(slug, file, { sizes = '100vw', alt = '', lazy = true, cls = '', w =
 function heroHtml(h) {
   const d = `../nha/${h.slug}/`;
   const info = `<div class="hero-in${h.video && h.video.youtube ? '' : ' wrap'}">
+    ${SITE.slogan ? `<p class="slogan">${esc(SITE.slogan)}</p>` : ''}
     <p class="hero-tag">${ic('pin')}<span>${esc(h.tag)}</span></p>
     <h1>${esc(h.name)}</h1>
     <p class="hero-sub">${esc(h.sub)}</p>
@@ -219,7 +221,7 @@ ${heroHtml(h)}
 <section id="lien-he" class="sec"><div class="wrap"><p class="eyebrow">Người tư vấn</p><h2>Liên hệ trực tiếp</h2>
 <div class="agent">
   <div class="agent-ph">${LOGO(64)}</div>
-  <div class="agent-i"><p class="agent-n">${esc(SITE.brand)}</p><p class="agent-r">${esc(SITE.agentRole)}</p></div>
+  <div class="agent-i"><p class="agent-n">${esc(SITE.brand)}</p>${SITE.slogan ? `<p class="slogan slogan-sm">${esc(SITE.slogan)}</p>` : ''}<p class="agent-r">${esc(SITE.agentRole)}</p></div>
 </div>
 <div class="agent-cta">
   <a class="btn btn-primary" href="${telHref}">${ic('phone')}Gọi ${esc(SITE.phoneText)}</a>
@@ -229,6 +231,7 @@ ${heroHtml(h)}
 </main>
 <footer class="foot"><div class="wrap">
   <p class="foot-b">${LOGO(32)}<span>${esc(SITE.brand)}</span></p>
+  ${SITE.slogan ? `<p class="slogan slogan-sm">${esc(SITE.slogan)}</p>` : ''}
   <p>${esc(h.name)} · ${esc(h.address)}</p>
   <p><a href="${telHref}">${esc(SITE.phoneText)}</a></p>
   <p class="foot-s">Thông tin, hình ảnh do chủ nhà cung cấp. Vui lòng kiểm tra giấy tờ gốc trước khi giao dịch.</p>
@@ -281,7 +284,7 @@ ${topBar('')}
 write('chinh-sach-bao-mat/index.html', `${head({ title: `Chính sách bảo mật – ${SITE.brand}`, description: `Cách ${SITE.brand} thu thập và dùng thông tin khách hàng.`, url: `${BASE}/chinh-sach-bao-mat/`, rel: '../' })}
 <body>
 <main class="doc">
-${fs.readFileSync(path.join(ROOT, 'src/privacy.html'), 'utf8')}</main>
+${fs.readFileSync(path.join(ROOT, 'src/privacy.html'), 'utf8').replaceAll('{{PHONE}}', SITE.phone).replaceAll('{{PHONE_TEXT}}', SITE.phoneText)}</main>
 </body></html>
 `);
 

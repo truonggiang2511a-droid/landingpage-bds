@@ -308,6 +308,25 @@
     });
   });
 
+  // ================= HIỆN DẦN KHI CUỘN =================
+  // Chỉ gắn cho khối nằm DƯỚI màn đầu (màn đầu hiện ngay, không chờ hiệu ứng). Máy không hỗ trợ → hiện bình thường.
+  (function () {
+    window.__rv = true;
+    var root = document.documentElement;
+    if (!('IntersectionObserver' in window) || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) { root.classList.remove('rv-on'); return; }
+    var els = $$('.sec .eyebrow, .sec h2, .hl li, .grid, .specs, .addr, .lmap, .legend li, .price-card, .docs, .form-card, .agent, .agent-cta, .faq details, .facts li');
+    var fold = innerHeight; // chỉ ẩn khối thật sự nằm ngoài màn hình lúc mở trang
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { rootMargin: '0px 0px -40px 0px' });
+    els.forEach(function (el, i) {
+      if (el.getBoundingClientRect().top < fold) return;
+      el.classList.add('rv');
+      el.style.transitionDelay = (i % 4) * 70 + 'ms';
+      io.observe(el);
+    });
+  })();
+
   // ================= VIDEO + BẢN ĐỒ (chỉ tải khi bấm) =================
   function playVid(v, start) {
     var yt = v.getAttribute('data-yt'), mp4 = v.getAttribute('data-mp4'), t = Math.max(0, start | 0);

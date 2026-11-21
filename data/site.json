@@ -3,9 +3,9 @@
   "brandTop": "MINH THÙY",
   "brandSub": "Nhà Xinh",
   "baseUrl": "https://nhaxinhminhthuy.com",
-  "phone": "0941916879",
-  "phoneText": "0941 916 879",
-  "zalo": "https://zalo.me/0941916879",
+  "phone": "0906506363",
+  "phoneText": "0906 506 363",
+  "zalo": "https://zalo.me/0906506363",
   "agentRole": "Tư vấn miễn phí, dẫn xem nhà tận nơi",
   "color": "#14532D",
   "tracking": {
@@ -19,5 +19,6 @@
     "_ghiChu": "CRM tạm đặt trong dự án Supabase giang-ai-marketing-os, bảng ở schema riêng nx (không mở qua API). Trình duyệt chỉ gọi hàm nx_crm_* bằng mật khẩu CRM.",
     "supabaseUrl": "https://otolussdwersbctkveot.supabase.co",
     "supabaseKey": "sb_publishable_XDec2fDZVE-u4sayoHX7wg_Zx-zFFwA"
-  }
+  },
+  "slogan": "Nhà thật · Giá thật · Tận tâm thật"
 }
