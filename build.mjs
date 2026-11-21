@@ -69,7 +69,7 @@ ${noindex ? '<meta name="robots" content="noindex">\n' : ''}<link rel="icon" hre
 <meta property="og:type" content="website">
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(description)}">
-${image ? `<meta property="og:image" content="${image}">\n` : ''}<meta property="og:url" content="${url}">
+${image ? `<meta property="og:image" content="${image}">\n${/\.jpe?g$/.test(image) ? '<meta property="og:image:width" content="1200">\n<meta property="og:image:height" content="630">\n' : ''}` : ''}<meta property="og:url" content="${url}">
 <link rel="preload" href="${rel}fonts/geist-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="${rel}fonts/geist-vietnamese-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <script>document.documentElement.classList.add('rv-on');setTimeout(function(){if(!window.__rv)document.documentElement.classList.remove('rv-on')},2500)</script>
@@ -144,7 +144,9 @@ function housePage(h) {
   const facts = [h.downPct ? [`Trả trước ${h.downPct}%`, ty(h.price * h.downPct / 100)] : null, ['Giá', h.priceText], ['Diện tích', spec('Diện tích đất')], ['Pháp lý', 'Sổ hồng · đã hoàn công']].filter((f) => f && f[1]);
   const days = ''; // ngày xem do app.js tự dựng (7 ngày tới)
 
-  return `${head({ title: h.title, description: h.description, url, image: `${BASE}/nha/${h.slug}/${h.heroImage}.webp`, rel: '../',
+  // Ảnh chia sẻ: JPG 1200×630 (Zalo/Facebook hiện chắc chắn hơn webp) — tạo khi thêm căn, xem CLAUDE.md mục 5
+  const ogImg = h.ogImage ? `${BASE}/nha/${h.slug}/${h.ogImage}` : `${BASE}/nha/${h.slug}/${h.heroImage}.webp`;
+  return `${head({ title: h.title, description: h.description, url, image: ogImg, rel: '../',
     extra: `${preload}${hasVid ? '<link rel="preconnect" href="https://www.youtube-nocookie.com">\n<link rel="preconnect" href="https://www.youtube.com">\n<link rel="dns-prefetch" href="https://i.ytimg.com">\n' : ''}<script type="application/ld+json">${JSON.stringify(ld)}</script>\n<script>window.LP=${JSON.stringify(LP)}</script>\n` })}
 <body>
 ${topBar()}

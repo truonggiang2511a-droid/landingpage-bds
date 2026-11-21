@@ -13,7 +13,9 @@ repo GitHub trống, code chỉ nằm trong 1 file zip ở Downloads rồi bị 
 - Web tĩnh + Cloudflare Pages Functions. **1 file `data/nha/<slug>.json` = 1 trang `/<slug>/`**. `node build.mjs` → `dist/`.
 - Cloudflare Pages dự án `nhaxinhminhthuy-bds` (tài khoản Cloudflare Hungnguyen2511ab@gmail.com, account ID `335d210ae0fbc3ac05c5d7b9f45d0a60`,
   đăng nhập bằng Google). Tên miền `nhaxinhminhthuy.com`: **21/11 chưa có trong tài khoản** (chưa mua xong ở Cloudflare Registrar) → web đang chạy ở
-  `nhaxinhminhthuy-bds.pages.dev`. Khi có tên miền: gắn vào Pages + đổi `SITE_URL` rồi mới bật `CANONICAL_REDIRECT=on` (bật sớm = 301 sang tên miền chết).
+  `nhaxinhminhthuy-bds.pages.dev` và **`data/site.json → baseUrl` tạm để pages.dev** (canonical, og:url, og:image, sitemap trỏ về đây — trước đó trỏ tên miền
+  chưa có ⇒ chia sẻ lên Zalo/Facebook mất ảnh xem trước). Khi có tên miền: gắn vào Pages → đổi `baseUrl` + biến `SITE_URL` sang tên miền → build/deploy →
+  rồi mới bật `CANONICAL_REDIRECT=on` (middleware tự bỏ qua nếu baseUrl trùng host hiện tại, tránh vòng lặp).
 - CRM tại `/crm/` — **tạm** đặt trong dự án Supabase `giang-ai-marketing-os` (ref `otolussdwersbctkveot`), schema riêng `nx`.
   (Dự án cũ `giang-quant-dashboard` bị Supabase tạm dừng do 1 tuần không hoạt động + gói miễn phí chỉ 2 dự án chạy; dữ liệu cũ còn trong đó.)
 
@@ -73,7 +75,9 @@ repo GitHub trống, code chỉ nằm trong 1 file zip ở Downloads rồi bị 
 1. Ảnh → webp 3 cỡ (`-400`, `-800`, gốc 1600) vào `public/nha/<slug>/`. Bỏ ảnh có dấu "Ai✦" (Galaxy AI), ảnh trùng; ảnh sổ phải che số thửa/số vào sổ.
 2. Chép `data/nha/nha-mat-tien-le-thi-tam-phuoc-ly.json` → sửa nội dung. `video.youtube` = mã video (phần sau `v=`), để trống = hero ảnh.
 3. Khoảng cách tiện ích: đo bằng OSRM/OpenStreetMap, không tự đoán. Địa chỉ sau sáp nhập 07/2025: tên xã mới + tên cũ theo sổ trong ngoặc.
-4. `npm test` → deploy preview → xem điện thoại → deploy chính → push GitHub.
+4. Ảnh chia sẻ `public/nha/<slug>/og.jpg` 1200×630 (Zalo/Facebook đọc JPG chắc hơn webp) + `"ogImage": "og.jpg"` trong data căn. Chữ trên ảnh chỉ dùng số liệu
+   thật của căn (giá trả trước, pháp lý, khoảng cách đã đo). Làm như bản LTT: HTML + Playwright chụp 1200×630, tiêu đề 1 dòng.
+5. `npm test` → deploy preview → xem điện thoại → deploy chính → push GitHub.
 
 ## 6. Deploy
 ```
@@ -123,6 +127,9 @@ CLOUDFLARE_API_TOKEN=… CLOUDFLARE_ACCOUNT_ID=… npx wrangler pages deploy dis
 - 21/11 **đưa bản mới lên production** (deploy `16c2c498`). Thử thật: form → CRM ✓ Telegram ✓ TikTok SubmitForm ✓ Facebook Lead ✓; bấm Zalo → nx.clicks ✓;
   trang nén Brotli 98 KB → 20 KB. Suýt lỗi: `functions/_lib/util.js` đọc `env.SUPABASE_URL` — production còn biến này trỏ về dự án Supabase đã dừng ⇒ lead sẽ
   không vào CRM. Đã đổi tên biến + thêm test. Link ngắn giữ `utm_campaign=ltt` như bản cũ (báo cáo liền mạch).
+- 21/11 Lighthouse mobile trên web thật SAU khi bật video tự chạy: Performance 91 → **70** (FCP 1,5 s, LCP 2,2 s vẫn tốt; TBT 1,8 s do YouTube ~1,5 MB +
+  pixel Facebook/TikTok), Accessibility 100, SEO 100, Best Practices 79 (cookie bên thứ ba của YouTube/Facebook). Ảnh/font của mình đã cache 1 năm;
+  các mục "cache ngắn" còn lại đều là của Facebook/YouTube. Nếu khách máy yếu thoát nhiều → cân nhắc chỉ tự chạy khi khách lướt/chạm.
 - Tiêu đề video YouTube ghi "135m²", sổ ghi 138 m² → trang giữ 138 m² theo sổ; nên sửa tiêu đề video cho khớp.
 
 ## 8. Việc còn chờ

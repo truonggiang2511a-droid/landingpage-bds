@@ -15,10 +15,13 @@ for (const h of houses) {
   t(`${h.slug}: có form, nút gọi, Zalo, thanh dưới`, () => {
     for (const s of ['id="leadForm"', 'name="phone"', `tel:${SITE.phone}`, SITE.zalo, 'id="bar"', 'window.LP=']) assert.ok(html.includes(s), 'thiếu ' + s);
   });
-  t(`${h.slug}: pixel TikTok/Meta đúng mã, không còn link pages.dev`, () => {
+  t(`${h.slug}: pixel TikTok/Meta đúng mã, link chia sẻ/canonical trỏ đúng baseUrl đang chạy`, () => {
     if (SITE.tracking.tiktokPixelId) assert.ok(html.includes(SITE.tracking.tiktokPixelId));
     if (SITE.tracking.metaPixelId) assert.ok(html.includes(SITE.tracking.metaPixelId));
-    assert.ok(!/pages\.dev/.test(html), 'còn link pages.dev');
+    // canonical, og:url, og:image phải trỏ về baseUrl (đang là pages.dev khi chưa có tên miền) — trỏ tên miền chết = mất ảnh xem trước khi chia sẻ
+    const base = SITE.baseUrl.replace(/\/$/, '');
+    for (const m of html.matchAll(/(?:rel="canonical" href|property="og:(?:url|image)" content)="([^"]+)"/g)) assert.ok(m[1].startsWith(base), 'link lệch baseUrl: ' + m[1]);
+    if (!/pages\.dev/.test(base)) assert.ok(!/pages\.dev/.test(html), 'đã có tên miền nhưng còn link pages.dev');
     if (SITE.tracking.gtmId) assert.ok(html.includes(SITE.tracking.gtmId)); else assert.ok(!html.includes('googletagmanager'));
   });
   t(`${h.slug}: video đầu trang chỉ là ảnh bìa (không nhúng iframe YouTube sẵn)`, () => {
